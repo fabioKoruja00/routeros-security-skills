@@ -12,8 +12,8 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | www-ssl/api-ssl certificate | `/ip service print detail` + `/certificate print proplist=name,common-name,subject-alt-name,issuer,serial-number,fingerprint,invalid-before,invalid-after,expired,revoked,trusted,private-key,key-type,key-size,signature-algorithm` | `certificate=none` on a TLS service, or an expired certificate in external use | MEDIUM |
 | SSH with weak crypto | `/ip ssh print` | `strong-crypto=no`, `allow-none-crypto=yes`, or `host-key-size` below 2048 | MEDIUM |
 | SSH forwarding enabled | `/ip ssh print` | `forwarding-enabled` other than `no` without a declared use: the device becomes a pivot into the network | HIGH |
-| `admin` user active | `/user print detail` | user `admin` with `disabled=no`. Without password or with the default one: immediate CRITICAL | CRITICAL |
-| User without source restriction | `/user print detail` | account in group `full`/`write` with `address=""` | HIGH |
+| `admin` user active | `/user print proplist=name,group,address,disabled,last-logged-in` | user `admin` with `disabled=no`. Password value/strength is deliberately not assessed by the agent | CRITICAL |
+| User without source restriction | `/user print proplist=name,group,address,disabled,last-logged-in` | account in group `full`/`write` with `address=""` | HIGH |
 | Group with too much permission | `/user group print detail` | monitoring-only group with `write`, `policy`, `sensitive` or `password` | HIGH |
 | Orphan SSH key | `/user ssh-keys print detail` | public key registered that nobody recognises — access that survives a password change | CRITICAL |
 | Unexpected active session | `/user active print` | session from an unknown origin, or `via=api` nobody recognises | HIGH |
