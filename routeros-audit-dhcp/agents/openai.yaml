@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit DHCP"
+  short_description: "Audit DHCP servers, clients, pools, leases, rogue DHCP and starvation exposure."
