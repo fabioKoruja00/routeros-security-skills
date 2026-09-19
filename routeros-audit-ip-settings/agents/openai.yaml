@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit IP Settings"
+  short_description: "Audit RouterOS IP stack settings, redirects, source routing, rp-filter and limits."
