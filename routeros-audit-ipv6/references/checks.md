@@ -7,7 +7,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
 | IPv6 active without use | `/ipv6 settings print` and `/ipv6 address print` | stack enabled on a network that neither uses nor manages IPv6 | HIGH |
-| Empty v6 firewall | `/ipv6 firewall filter print detail stats` | empty list, or only disabled rules, with an active IPv6 address | CRITICAL |
+| Empty v6 firewall | `/ipv6 firewall filter print detail stats` + `/system default-configuration print` | empty list, or only disabled rules, with active/routable IPv6. First determine whether this model/profile was expected to receive `defconf`; CCR, some switch/CAP/IP-only profiles and `no-defaults=yes` installs may legitimately start without it | CRITICAL |
 | Restrictive v4 policy and loose v6 | `/ip firewall filter print` + `/ipv6 firewall filter print` | same box with tight rules on v4 and nothing on v6 | CRITICAL |
 | RA acceptance on a router | `/ipv6 settings print` (`accept-router-advertisements`, `forward`) and `/ipv6 route print where dynamic` | acceptance active with `forward=yes` on an untrusted link: another device injects the default route | HIGH |
 | ICMPv6 redirect | `/ipv6 settings print` | `accept-redirects` active on a router | MEDIUM |
@@ -95,7 +95,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
 | Block outside the plan | `/ipv6 address print`, `/ipv6 pool print`, `/ipv6 route print` | address in use outside the documented plan: **covered by no firewall rule and no announcement filter** | MEDIUM |
-| Predictable address exposed | `/ipv6 address print` | service on `::1`/`::2` without source restriction. Not a reason to renumber — a reason to filter: "hard-to-find address" is not a control | MEDIUM |
+| Predictable address exposed | `/ipv6 address print` | a service on obvious IIDs such as `::1`, `::53`, `::80` or memorable hexadecimal patterns is easier to discover. Predictability is not the vulnerability and renumbering is not the control — restrict the service with firewall/source policy | LOW |
 | EUI-64 on an exposed service | `/ipv6 address print detail where eui-64=yes` | MAC embedded in the address: traceable and predictable | LOW |
 | PTP with a public /64 | `/ipv6 address print` | point-to-point link occupying a whole /64 — unnecessary scanning surface | LOW |
 
