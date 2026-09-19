@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-aaa
-description: "Read-only audit of authentication backends on MikroTik RouterOS: RADIUS secret strength, Message-Authenticator requirement, CoA/incoming without source restriction, single RADIUS without a pair, AAA default group, RADIUS over untrusted networks, accounting, PPP secrets and profiles, PPP authentication methods, User Manager exposure. This skill should be used when assessing how a RouterOS device authenticates administrators and subscribers, without changing configuration."
+description: "Read-only audit of authentication backends on MikroTik RouterOS: RADIUS secret handling and exposure, Message-Authenticator requirement, CoA/incoming without source restriction, single RADIUS without a pair, AAA default group, RADIUS over untrusted networks, accounting, PPP secrets and profiles, PPP authentication methods, User Manager exposure. This skill should be used when assessing how a RouterOS device authenticates administrators and subscribers, without changing configuration."
 ---
 
 # RouterOS security audit — AAA and RADIUS
@@ -17,6 +17,6 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 
 ## Traps
 
-- **Do not use `/radius print detail` during normal collection.** Use the safe `proplist` in the table. Secret-strength review requires a separately authorized sensitive pass and the value must never be copied into the report.
+- **Never use `/radius print detail` or retrieve RADIUS/PPP/User Manager secret values.** Use only safe `proplist` fields. Secret strength is intentionally outside the scope of agent-assisted audit.
 - **A single RADIUS locks administrative login too** when AAA depends on it — availability is a security finding here.
 - PPP tunnel and PPPoE server hardening is in `routeros-audit-vpn`.
