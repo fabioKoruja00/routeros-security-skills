@@ -6,10 +6,10 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Adjacency without authentication | `/routing ospf interface-template print detail` (v7) / `/routing ospf interface print detail` (v6) | `auth` empty: **any host on the segment becomes a neighbor and injects LSAs** | CRITICAL |
+| Adjacency without authentication | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,network-type,passive,cost,priority,hello-interval,dead-interval,disabled` (v7) / equivalent non-secret `proplist` on v6 | `auth` empty: **any host on the segment becomes a neighbor and injects LSAs** | CRITICAL |
 | Cleartext authentication | same command | `auth=simple` | HIGH |
 | Customer interface active | same command (`passive`) | `passive=no` on an interface that does not talk to another OSPF router | HIGH |
-| Generic template without exception | `/routing ospf interface-template print detail` + `/routing ospf interface print` | template `interfaces=all` without reviewing what it resolved to: **a new interface joins OSPF on its own**. Read the resolved list, not the template | MEDIUM |
+| Generic template without exception | safe interface-template `proplist` + `/routing ospf interface print` | template `interfaces=all` without reviewing what it resolved to: **a new interface joins OSPF on its own**. Read the resolved list, not the template | MEDIUM |
 | Unexpected neighbor | `/routing ospf neighbor print detail` and `/routing ospf lsa print` | unknown router-id adjacent | CRITICAL |
 | Flapping adjacency | `/routing ospf neighbor print detail` (state-change counter) and `/log print where topics~"ospf"` | counter climbing, or neighbor stuck in `ExStart`/`2-way` — usually MTU, authentication or network type | MEDIUM |
 | Static neighbor outside the domain | `/routing ospf static-neighbor print detail` | NBMA pointing to a third party's IP | MEDIUM |
@@ -19,11 +19,11 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Point-to-point link as broadcast | `/routing ospf interface-template print detail` (`network-type`) | `broadcast` (the default) on a two-router link across a radio, media converter or L2 fibre. **When the L2 drops with the ports still UP, both sides become DR and the adjacency does not come back on its own** | HIGH |
+| Point-to-point link as broadcast | safe interface-template `proplist` | `broadcast` (the default) on a two-router link across a radio, media converter or L2 fibre. **When the L2 drops with the ports still UP, both sides become DR and the adjacency does not come back on its own** | HIGH |
 | Priority inherited from an upgrade | same command (`priority`) | the default changed from **1 on v6 to 128 on v7**: a priority that was "rigid" on v6 stops counting after the upgrade and the election changes on its own | HIGH |
 | Weak device eligible as DR | same command | `priority` above 0 on small hardware | MEDIUM |
 | Different timers between sides | same command (hello/dead) | divergent values — the adjacency does not close | MEDIUM |
-| NBMA without neighbor list | `/routing ospf interface-template print detail` + `/routing ospf static-neighbor print` | `network-type=nbma` without a matching static neighbor | MEDIUM |
+| NBMA without neighbor list | safe interface-template `proplist` + `/routing ospf static-neighbor print` | `network-type=nbma` without a matching static neighbor | MEDIUM |
 
 ## 3. OSPF — instance, area and redistribution
 
@@ -37,7 +37,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | `no-summaries` in the wrong place | same command | set on the ABR (should be only on the internal routers): **the area is left without a route to the rest of the network** | HIGH |
 | NSSA without translator | same command | `nssa-translator=no` on every ABR of the NSSA | MEDIUM |
 | Missing backbone | same command | no area `0.0.0.0`. On **v7 every area, including the backbone, is created by hand** — on v6 it came ready | MEDIUM |
-| Permanent virtual-link | `/routing ospf interface-template print detail where network-type=virtual-link` | a patch became permanent, worse without authentication | HIGH |
+| Permanent virtual-link | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,network-type,passive,cost,priority,hello-interval,dead-interval,disabled where network-type=virtual-link` | a patch became permanent, worse without authentication | HIGH |
 | Missing summarisation | `/routing ospf area-range print detail` | internal prefix (backup network, management) announced to the backbone | MEDIUM |
 | Instance in the wrong VRF | `/routing ospf instance print detail` (`vrf`, `routing-table`) | a customer VRF instance with `vrf=main`: leak between customers | HIGH |
 | Growing LSA database | `/routing ospf lsa print count-only` | count climbing without a topology change | HIGH |
@@ -50,7 +50,7 @@ whole area.
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
 | Subscriber /32 in OSPF | `/ip route print detail where dst-address~"/32"` and `/routing ospf lsa print` | dozens or hundreds of `/32` with OSPF origin | HIGH |
-| Subscriber block in the area | `/routing ospf interface-template print detail` (`networks`) | the pool block listed — generates one LSA per session | HIGH |
+| Subscriber block in the area | safe interface-template `proplist` including `networks` where supported | the pool block listed — generates one LSA per session | HIGH |
 | No aggregate with blackhole | `/ip route print detail where blackhole` | missing discard route of the aggregated block that replaces the /32s | HIGH |
 | Blackhole competing with the real route | same command | `distance` too low: the blackhole wins over the good route and **swallows the traffic silently** | HIGH |
 | Concentration area is not stub | `/routing ospf area print detail` | area with hundreds of sessions still `default` | MEDIUM |
