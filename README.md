@@ -43,7 +43,7 @@ generate false positives — what *looks* like a finding and is not.
   factory default is not somebody's insecure choice.
 - **Read the role of the device.** Edge, concentrator, switch, AP and multihomed core do not
   accept the same list.
-- **Secrets do not enter normal AI-assisted collection.** Use safe `proplist` selections on credential-bearing areas. Secret-strength checks require a separately authorized sensitive review; never include the secret value in the report. Never use `show-sensitive` in normal collection.
+- **Secrets never enter AI-assisted collection.** Use safe `proplist` selections on credential-bearing areas. Secret-strength checks are outside agent scope because secret values must never be retrieved. Never include secret values in prompts, context, logs, artifacts or reports. Never use `show-sensitive` in agent-assisted collection.
 - **In doubt between two severities, the lower.** Inflated severity turns the report into noise.
 - **Absence of a rule is not automatically a failure.** Check `disabled`, order in the chain, the
   interface list and the packet counter first.
