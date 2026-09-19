@@ -20,9 +20,9 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Default community | `/snmp community print detail` | `public` or `private` still present and enabled | CRITICAL |
-| No source restriction | `/snmp community print detail` | `addresses=0.0.0.0/0` (or `::/0`, which is the factory value) — the MIB hands out interfaces, IPs, clients, traffic and topology | HIGH |
-| Write enabled | `/snmp community print detail` | `write-access=yes`: **the device can be reconfigured over SNMP**, and with a default community that is open administrative access | CRITICAL |
-| Unprotected trap | `/snmp print` | `trap-version=1` or `2`, with a default community, leaving the management network | MEDIUM |
-| v1/v2c on an untrusted network | `/snmp print` and `/snmp community print detail` | `security=none` outside an isolated management network | HIGH |
+| SNMP community exposure | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | assess scope, security mode and privileges only. Never retrieve the community string/name because it is a credential | HIGH |
+| No source restriction | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `addresses=0.0.0.0/0` or `::/0` on an enabled entry — the MIB may expose interfaces, IPs, clients, traffic and topology | HIGH |
+| Write enabled | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `write-access=yes`: the device can be reconfigured over SNMP. Do not retrieve the community credential to prove the risk | CRITICAL |
+| Unprotected trap | `/snmp print` | `trap-version=1` or `2` leaving the management network without an approved protected transport. Do not retrieve the trap community value | MEDIUM |
+| v1/v2c on an untrusted network | `/snmp print` and `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `security=none` outside an isolated management network | HIGH |
 | Trap to the wrong destination | `/snmp print` (`trap-target`) | trap leaving to an IP that is not the current collector | MEDIUM |
