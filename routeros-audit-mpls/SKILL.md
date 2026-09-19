@@ -9,7 +9,7 @@ Isolation between customers is the whole point, and it breaks silently: a duplic
 
 ## Rules
 
-Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `remove`, `enable`, `disable`, `reboot`. Connect with a `read`-group user and audit only the devices that were named. Secrets never enter the report (use `proplist` on areas that store credentials). Method, severity scale (CRITICAL / HIGH / MEDIUM / LOW — in doubt, the lower), output format and the collection order live in `routeros-audit-method`; factory values in `routeros-factory-defaults`. Read the RouterOS version first: v6 and v7 menus differ, and a command in the wrong menu returns empty.
+Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `remove`, `enable`, `disable`, `reboot`. Connect with a dedicated least-privilege audit account; do not assume the built-in `read` group is strictly read-only. Audit only the devices that were named. Secrets never enter the report (use `proplist` on areas that store credentials). Method, severity scale (CRITICAL / HIGH / MEDIUM / LOW — in doubt, the lower), output format and the collection order live in `routeros-audit-method`; factory values in `routeros-factory-defaults`. Read the RouterOS version first: v6 and v7 menus differ, and a command in the wrong menu returns empty.
 
 ## Checks
 
@@ -17,7 +17,7 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 
 ## Traps
 
-- **The router cannot be managed from within a VRF** — services answer through the main table. A policy assuming otherwise protects nothing.
+- **Management is not automatically in a VRF.** RouterOS v7 supports a `vrf` parameter for several IP services (including SSH, Winbox, API and HTTPS); the default is `main`. Verify the service's actual VRF instead of assuming either behavior. FTP is an exception and does not support changing VRF.
 - **L2MTU below the MPLS MTU discards packets silently** when the next header is not IP.
 - **`bandwidth` on a TE tunnel only accounts the reservation**; `bandwidth-limit` is what limits.
 - **MPLS does not exist on `smips` on v7.**
