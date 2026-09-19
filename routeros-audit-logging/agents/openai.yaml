@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit Logging"
+  short_description: "Audit logging, NTP, SNMP, e-mail and monitoring-related security settings."
