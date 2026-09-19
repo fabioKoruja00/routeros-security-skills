@@ -18,7 +18,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| No output filter | `/routing bgp connection print detail` + `/routing filter rule print` | `output.filter` empty: **on v7 every connected network is announced by default** — the internal network leaks without anyone asking | CRITICAL |
+| No output filter | `/routing bgp connection print detail` + `/routing filter rule print` + the configured `output.network`/redistribution sources | an empty output filter is no outbound safety boundary. On RouterOS v7, if no output filter chain is set BGP accepts eligible output by default; verify `output.network`, redistribution, route selection and actual advertisements before declaring a leak | HIGH |
 | No input filter | same | `input.filter` empty on a transit peer: accepts bogons, default and prefixes more specific than /24 | CRITICAL |
 | Transit leak | `/routing filter rule print` | output filter letting a prefix learned from one transit through to another transit or to an IX | CRITICAL |
 | `local-pref` accepted from outside | `/routing filter rule print` + `/ip route print detail` | attribute received from an external peer without normalisation in the input filter: **the neighbor starts deciding your AS's exit** | HIGH |
