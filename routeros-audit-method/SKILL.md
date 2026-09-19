@@ -20,9 +20,7 @@ The shared method behind every `routeros-audit-*` skill. Every command in those 
   `/user print proplist=name,group,address`, `/certificate print proplist=name,invalid-after,expired`.
   Never paste a PSK, PPP password, private key or SNMP community into a document, a chat or an
   agent prompt. The finding is "weak password on X", not the value.
-- **Connect with a user of group `read`** over SSH or the API. Reading production is still
-  touching it: it creates a session, a log line and competes for CPU with the device's own work.
-  Audit only the devices that were named, when they were named.
+- **Use a dedicated least-privilege audit account** over SSH or the API. Do not assume the built-in `read` group is strictly read-only: it also carries policies such as `reboot`, `test`, `sniff`, `sensitive`, API access and others. Build a custom group with only the login method and read capabilities required for the approved collection. Add any extra permission only for a named check that requires it. Reading production is still touching it: it creates a session, a log line and competes for CPU with the device's own work. Audit only the devices that were named, when they were named.
 
 ## Before judging any item
 
@@ -43,7 +41,7 @@ One topic per connection. Start with what depends on nothing (`/ip service`, `/i
 bulk read-only sequence is in [references/collection.md](references/collection.md); the safe
 procedure during an incident is in [references/incident.md](references/incident.md).
 
-`/export verbose hide-sensitive` **complements, never replaces** the prints: `/ip settings`,
+`/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on current RouterOS releases; **never use `show-sensitive` during normal AI-assisted collection**. `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
 connection-tracking timeouts only appear in the `print` of their own menu.
 
@@ -80,9 +78,7 @@ devices, not one item per device.
 - **`/export` does not show everything.** `/ip/settings`, the per-service `Available From`,
   `Protected RouterBOOT`, `device-mode` and the connection-tracking timeouts only appear in the
   `print` of the area. An audit done only on the export approves a device with the IP stack open.
-- **A rule in `bridge filter` does not run on a port with hardware offload.** The packet never
-  reaches the CPU. The rule stays on screen, the counter stays at zero, and the policy never
-  existed.
+- **Do not assume a `bridge filter` protects traffic that stays fully hardware-offloaded.** Whether the packet reaches the CPU depends on platform, switch chip and forwarding path. Confirm CPU punt or hardware ACL/switch-chip enforcement on the installed model before judging the policy.
 - **On a device that only bridges, `/ip firewall` does not see the traffic** while
   `use-ip-firewall=no` (the default). The whole policy may be decorative.
 - **The audit itself can take the target down.** Wireless `scan` and `snooper` without
