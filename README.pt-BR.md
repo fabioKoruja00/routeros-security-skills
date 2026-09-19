@@ -9,7 +9,7 @@ para agentes de IA (Claude Code, ChatGPT Skills e carregadores compatíveis). Um
 
 | Skill | Domínio |
 |---|---|
-| [`routeros-audit-method`](routeros-audit-method/) | Como rodar a auditoria: regras invioláveis, o que ler antes de julgar, ordem de coleta, escala de severidade, formato de saída, armadilhas de campo, procedimento em incidente. **Ler primeiro.** |
+| [`routeros-audit-method`](routeros-audit-method/) | Como rodar a auditoria: regras invioláveis, o que ler antes de julgar, ordem de coleta, escala de severidade, formato de saída, armadilhas documentadas, procedimento em incidente. **Ler primeiro.** |
 | [`routeros-factory-defaults`](routeros-factory-defaults/) | Valores de fábrica de `/ip settings`, `/ipv6 settings`, connection tracking, device-mode, firewall padrão por chain, listas oficiais de bogon e os serviços que o fabricante manda desligar. |
 | [`routeros-audit-access`](routeros-audit-access/) | Acesso administrativo: serviços e restrição de origem, SSH, usuários/grupos/chaves, RouterBOOT, device-mode, grupo default do AAA, botão físico, supout, gráficos, versão. |
 | [`routeros-audit-services`](routeros-audit-services/) | Serviços auxiliares: mac-server, MNDP, bandwidth test, cache DNS, DoH, proxy, SOCKS, UPnP, cloud/DDNS, RoMON. |

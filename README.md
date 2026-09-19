@@ -9,7 +9,7 @@ Read-only security audit skills for MikroTik RouterOS (v6/v7), packaged for AI c
 
 | Skill | Domain |
 |---|---|
-| [`routeros-audit-method`](routeros-audit-method/) | How to run the audit: unbreakable rules, what to read before judging, collection order, severity scale, output format, field traps, incident procedure. **Read first.** |
+| [`routeros-audit-method`](routeros-audit-method/) | How to run the audit: unbreakable rules, what to read before judging, collection order, severity scale, output format, documented traps, incident procedure. **Read first.** |
 | [`routeros-factory-defaults`](routeros-factory-defaults/) | Factory values of `/ip settings`, `/ipv6 settings`, connection tracking, device-mode, the default firewall per chain, the official bogon lists, and the services the vendor tells you to disable. |
 | [`routeros-audit-access`](routeros-audit-access/) | Administrative access: services and their source restriction, SSH, users/groups/keys, RouterBOOT, device-mode, AAA default group, physical button, supout, graphs, version. |
 | [`routeros-audit-services`](routeros-audit-services/) | Auxiliary services: mac-server, MNDP, bandwidth test, DNS cache, DoH, proxy, SOCKS, UPnP, cloud/DDNS, RoMON. |
