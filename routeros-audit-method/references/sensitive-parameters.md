@@ -37,10 +37,6 @@ The official list includes, among others:
 - cloud/backup/storage features where private keys or passwords may be exposed;
 - script-bearing fields such as scheduler actions, Netwatch actions and DHCP lease scripts because arbitrary code can embed credentials.
 
-## Version baseline
-
-The sensitive-menu review is cross-checked against MikroTik's current documentation with RouterOS 7.24.4 (stable, 2026-09-16) as the current v7 baseline. v6 remains version-specific; confirm field/menu behavior on the installed release before collection.
-
 ## Safe design principle
 
 The audit should be **zero-secret by construction**, not merely rely on RouterOS masking behavior.

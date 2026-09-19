@@ -79,7 +79,9 @@ uma — inclusive o de perder acesso ao equipamento. Caminho, não receita pront
 
 ## Fontes e aviso
 
-A semântica dos comandos, o comportamento dos menus, os defaults e o tratamento de parâmetros sensíveis do RouterOS são fundamentados na documentação oficial da MikroTik e em padrões públicos. Heurísticas de auditoria, severidades sugeridas e orientações operacionais são interpretações do projeto e também podem refletir prática de campo documentada. A revisão de comandos/menus inclui como baseline a versão estável atual RouterOS 7.24.4 (2026-09-16); sempre confirme o comportamento na versão instalada. Material independente, sem vínculo, endosso ou certificação da MikroTik.
+Tudo neste repositório vem de fontes oficiais e públicas: a documentação do MikroTik RouterOS e
+padrões públicos. Material independente, sem vínculo, endosso ou certificação da MikroTik. Comandos, menus e defaults mudam entre versões
+do RouterOS — confirmar na versão instalada antes de agir sobre qualquer achado.
 
 ## Licença
 
