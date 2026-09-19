@@ -34,8 +34,7 @@ The shared method behind every `routeros-audit-*` skill. Every command in those 
 
 One topic per connection. Start with what depends on nothing (`/ip service`, `/ip settings`,
 `/tool mac-server`), then the areas that require walking rule lists (`/ip firewall/*`). The
-bulk read-only sequence is in [references/collection.md](references/collection.md); the safe
-procedure during an incident is in [references/incident.md](references/incident.md).
+bulk read-only sequence is in [references/collection.md](references/collection.md); the sensitive-menu denylist is in [references/sensitive-parameters.md](references/sensitive-parameters.md); the safe procedure during an incident is in [references/incident.md](references/incident.md).
 
 `/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. **Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) in any agent-assisted collection. There is no sensitive-review mode.** `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
