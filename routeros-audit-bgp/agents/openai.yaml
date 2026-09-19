@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit BGP"
+  short_description: "Audit RouterOS BGP sessions, filters, route leaks, attributes and RPKI."
