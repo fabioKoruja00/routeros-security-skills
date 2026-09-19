@@ -12,8 +12,9 @@ If a RouterOS menu can contain a sensitive field:
 - do not use broad `print` or `print detail` in agent-assisted collection;
 - do not use `show-sensitive`;
 - do not export sensitive values;
-- use an explicit non-secret `proplist`;
+- use an explicit non-secret `proplist` on list-style menus;
 - if only presence/absence is needed, use `print count-only where <field>...` so the value is never printed;
+- on single-value settings menus that do not support `proplist`/`count-only`, use `:put [/menu get <non-secret-field>]`; if only secret presence matters, return only `:len [/menu get <sensitive-field>]`, never the field value;
 - if a check cannot be proven without retrieving the value, mark it **not agent-verifiable**;
 - a trusted local scanner may return only sanitized booleans/classifications, never raw secret-bearing content.
 
