@@ -20,6 +20,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
+| Default community | `/snmp community print count-only where name=public` and `... where name=private` | count above zero: the well-known name is tested by filter, the value itself is never printed | CRITICAL |
 | SNMP community exposure | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | assess scope, security mode and privileges only. Never retrieve the community string/name because it is a credential | HIGH |
 | No source restriction | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `addresses=0.0.0.0/0` or `::/0` on an enabled entry — the MIB may expose interfaces, IPs, clients, traffic and topology | HIGH |
 | Write enabled | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `write-access=yes`: the device can be reconfigured over SNMP. Do not retrieve the community credential to prove the risk | CRITICAL |

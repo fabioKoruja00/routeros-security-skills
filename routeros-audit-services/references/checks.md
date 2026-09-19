@@ -23,5 +23,5 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | UPnP taking down the WAN | `/ip upnp print` and `/ip upnp interfaces print` | `allow-disable-external-interface=yes`: **any LAN host can disable the external interface** | CRITICAL |
 | Cloud / DDNS | `/ip cloud print` | `ddns-enabled=yes` or `update-time=yes` without need: publishes the device's public IP | MEDIUM |
 | RoMON | `/tool romon print` and `/tool romon port print` | `enabled=yes` without `secrets`, or RoMON port active on an untrusted interface | HIGH |
-| SNMP | `/snmp print` and `/snmp community print detail` | detailed in `routeros-audit-logging` | HIGH |
+| SNMP | `/snmp print` and `/snmp community print proplist=disabled,addresses,security,read-access,write-access` | detailed in `routeros-audit-logging` | HIGH |
 | Remote log and NTP | `/system logging action print` and `/system ntp client print` | detailed in `routeros-audit-logging` | HIGH |

@@ -14,8 +14,8 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | PMF off | `management-protection=disabled` | `pmf` empty or `disabled` | management frames unprotected: mass deauthentication and AP cloning | HIGH |
 | PMKID exposed | `/interface wireless security-profiles print proplist=name,authentication-types,mode,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | same | `disable-pmkid=no` — PMKID capture allows offline cracking without requiring the agent to read the PSK | MEDIUM |
 | Group key renewal | same | same | `group-key-update` far above the 5-minute default | LOW |
-| Weak / sample passphrase | same | same | passphrase short, digits only, equal to the SSID, or copied from training material. **The system accepts from 8 characters** | CRITICAL |
-| EAP without certificate validation | same | same | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
+| Passphrase strength | not agent-verifiable: the passphrase is never retrieved | a trusted local scanner may return only a sanitized boolean such as `weak_passphrase=true` (short, digits only, equal to the SSID, sample value). **The system accepts from 8 characters** | CRITICAL |
+| EAP without certificate validation | `/interface wireless security-profiles print proplist=name,mode,authentication-types,eap-methods,tls-mode` | `/interface wifi security print proplist=name,authentication-types,eap-methods,tls-mode` | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
 | WPS enabled | `/interface wireless print detail` | `/interface wifi print detail` | `wps-mode` other than `disabled` | HIGH |
 | WPA3/OWE available and unused | — | `/interface wifi security print proplist=name,authentication-types,management-protection` | hardware with `wifi-qcom` still WPA2 only; never retrieve `passphrase` or other key material | LOW |
 
@@ -35,14 +35,14 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Permissive final rule | `/interface wireless access-list print detail` | last entry **without** `mac-address`, with `authentication=yes forwarding=yes`: a catch-all that authenticates anyone | HIGH |
+| Permissive final rule | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | last entry **without** `mac-address`, with `authentication=yes forwarding=yes`: a catch-all that authenticates anyone | HIGH |
 | Rule order | same command (the numbering is the evaluation order) | broad permissive rule before the restrictive one — the list stops at the first match | HIGH |
 | Empty list with permissive default | `/interface wireless print detail` + access-list | `default-authentication=yes` and an empty list: only the password stands in the way | MEDIUM |
-| MAC as the only control | `/interface wireless access-list print detail` | MAC filter without WPA2 underneath — a MAC is sniffed and cloned | HIGH |
+| MAC as the only control | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | MAC filter without WPA2 underneath — a MAC is sniffed and cloned | HIGH |
 | Allow by OUI | same command | `mac-mask` covering a whole vendor (e.g. `FF:FF:FF:00:00:00`) with `action=accept` | CRITICAL |
 | Client talks to client | `/interface wireless print detail` or `/interface wifi datapath print detail` | `default-forwarding=yes` on a guest, hotspot or public SSID | HIGH |
 | Time-based rule without a clock | access-list + `/system ntp client print` | rule with `time=` on a device with NTP off: the window opens or closes at the wrong time | LOW |
-| Signal floor | `/interface wireless access-list print detail` | no `signal-range` on a façade AP — associates whoever is outside the building | LOW |
+| Signal floor | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | no `signal-range` on a façade AP — associates whoever is outside the building | LOW |
 | Loose connect-list on the client | `/interface wireless connect-list print detail` | station without a `security-profile` bound: associates to a same-name AP (evil twin) | HIGH |
 
 ## 4. Operating mode and L2 bridging

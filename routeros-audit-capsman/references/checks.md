@@ -29,7 +29,7 @@ configuration, **passphrase included**.
 |---|---|---|---|
 | Guest in the internal bridge | `/caps-man datapath print detail` or `/interface wifi datapath print detail` | guest datapath with the same `bridge` as corporate and no `vlan-id` | HIGH |
 | Tag configured without `vlan-mode` | same command | `vlan-id` filled with `vlan-mode` empty: the tag **is not applied** | HIGH |
-| VLAN by MAC | `/caps-man access-list print detail` | privileged VLAN assignment matching `mac-address` — whoever clones the MAC lands in the good VLAN | MEDIUM |
+| VLAN by MAC | `/caps-man access-list print proplist=mac-address,interface,signal-range,action,vlan-mode,vlan-id,disabled` | privileged VLAN assignment matching `mac-address` — whoever clones the MAC lands in the good VLAN | MEDIUM |
 | Local forwarding without filter | `/caps-man datapath print detail` | `local-forwarding=yes` on a remote CAP without its own firewall: client traffic exits on the AP's LAN, outside the controller's inspection | MEDIUM |
 | Tunnel data in the clear | `/caps-man datapath print detail` + `/interface print` | CAP crossing an untrusted network with CAPWAP only — **only control is encrypted (DTLS), data is not** | MEDIUM |
 | CAP management on the clients' network | `/ip address print` and `/interface bridge port print` on the CAP | AP management address inside the subnet handed out over Wi-Fi | HIGH |
