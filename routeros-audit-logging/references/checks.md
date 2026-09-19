@@ -12,7 +12,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | NTP off | `/system ntp client print` and `/system clock print` | `enabled=no` or clock out of time: invalidates TLS certificates, breaks RPKI/DNSSEC and makes the log useless for forensics | HIGH |
 | Open NTP server | `/system ntp server print` and `/ip firewall filter print detail` | `enabled=yes` reachable from the WAN — amplification vector | HIGH |
 | Debug on permanently | `/system logging print detail where topics~"debug\|packet\|raw"` | debug/packet/raw topic logging non-stop: leaks traffic content and fills the disk | HIGH |
-| E-mail without TLS or with a credential | `:put [/tool e-mail get server]`, `:put [/tool e-mail get port]`, `:put [/tool e-mail get tls]` (settings menu: no `proplist`; `print` shows the password field) | `tls=no`, or an SMTP password stored and reachable by anyone with read access | HIGH |
+| E-mail without TLS | `:put [/tool e-mail get server]`, `:put [/tool e-mail get port]`, `:put [/tool e-mail get tls]` | `tls=no` on an untrusted path. SMTP password presence/strength is intentionally not assessed by the agent because the password field is sensitive | HIGH |
 | Evidence never handled | `/log print without-paging where topics~"account\|critical\|error\|warning"` | serial failed logins, unexpected reboot or configuration change recorded and never looked at | HIGH |
 | Netwatch actions present | `/tool netwatch print proplist=name,host,type,interval,timeout,status,disabled` + presence-only counts for `up-script`, `down-script` and `test-script` | action scripts exist but their bodies must never enter the agent. Assess only presence, target and schedule unless a trusted local scanner returns sanitized classifications | MEDIUM |
 
