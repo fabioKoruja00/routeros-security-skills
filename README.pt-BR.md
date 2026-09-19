@@ -1,8 +1,7 @@
 # routeros-security-skills
 
 Skills de auditoria de segurança **somente leitura** para MikroTik RouterOS (v6/v7), empacotadas
-para agentes de IA (Claude Code e carregadores de skill compatíveis). Uma pasta por domínio (21
-skills); cada skill é autocontida e instalável sozinha. A documentação das skills é em inglês.
+para agentes de IA (Claude Code, ChatGPT Skills e carregadores compatíveis). Uma pasta por domínio (21 skills). As skills de domínio compartilham duas dependências-base: `routeros-audit-method` e `routeros-factory-defaults`. A documentação das skills é em inglês.
 
 [Read in English](README.md)
 
@@ -38,20 +37,22 @@ gera falso positivo — o que *parece* achado e não é.
 
 ## Princípios
 
-- **Somente leitura.** `print`, `get`, `export`, `monitor`. Nunca `set`, `add`, `remove`,
-  `enable`, `disable`, `reboot`. Auditoria que mexe no equipamento é incidente.
+- **Fluxo somente leitura.** `print`, `get`, `export`, `monitor`. Nunca `set`, `add`, `remove`, `enable`, `disable`, `reboot`. Use uma conta dedicada de auditoria com menor privilégio; não trate o grupo padrão `read` do RouterOS como estritamente somente leitura.
 - **Ler a versão e o default de fábrica antes de julgar.** Menu de v6 e v7 diferem; comando no
   menu errado volta vazio, e vazio parece "não configurado". Valor igual ao de fábrica não é
   escolha insegura de alguém.
 - **Ler o papel do equipamento.** Borda, concentrador, switch, AP e CORE multihomed não aceitam a
   mesma lista.
-- **Segredo não entra no relatório.** `proplist` nas áreas que guardam credencial. O achado é
-  "senha fraca em X", não o valor.
+- **Segredo não entra na coleta normal assistida por IA.** Use `proplist` segura nas áreas que guardam credencial. Checagem de força de segredo exige revisão sensível separadamente autorizada; nunca inclua o valor no relatório. Nunca use `show-sensitive` na coleta normal.
 - **Na dúvida entre duas severidades, a menor.** Severidade inflada vira ruído.
 - **Ausência de regra não é falha automática.** Conferir `disabled`, ordem na chain, lista de
   interface e contador antes.
 - **A própria auditoria pode derrubar o alvo.** `scan`/`snooper` de wireless sem
   `background=yes`, Torch e `profile` em CPU saturada. Ler estado, não provocar.
+
+## Dependências-base
+
+Instale `routeros-audit-method` e `routeros-factory-defaults` junto com qualquer skill de domínio. O método define coleta, severidade e saída; factory-defaults evita falsos positivos causados por comparar todo equipamento ao baseline de um roteador doméstico.
 
 ## Instalar
 
