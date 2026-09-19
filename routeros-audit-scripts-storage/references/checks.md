@@ -9,12 +9,12 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Potential secret-bearing script | `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count` | script source may contain passwords, tokens or connection strings, therefore the agent must never read `source`. Assess owner, permissions, execution history and whether the script is expected | HIGH |
 | Risky export routine | metadata only; never read script source or scheduler `on-event` | not directly agent-verifiable. A trusted local scanner may return only a sanitized boolean such as `unsafe_export=true`; raw source must never be sent to the agent | HIGH |
 | Backup exfiltration path | metadata only; never read inline script/scheduler source | destination/security details embedded in source are not agent-verifiable. Use only sanitized metadata or a trusted local scanner result; never send raw source, URLs with credentials, tokens or passwords to the agent | HIGH |
-| Script not requiring permissions | `/system script print detail` | `dont-require-permissions=yes`: a user in a restricted group triggers an action their group would not allow | HIGH |
-| Broad script permission | `/system script print detail` (`policy`) | a simple routine with `policy` containing `password`, `sensitive` or `policy` | HIGH |
+| Script not requiring permissions | `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count` | `dont-require-permissions=yes`: a user in a restricted group triggers an action their group would not allow | HIGH |
+| Broad script permission | `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count` | a simple routine with `policy` containing `password`, `sensitive` or `policy` | HIGH |
 | Fetch certificate validation in scripts | metadata only; never read script source | not agent-verifiable when embedded in script source. A trusted local scanner may return only a boolean such as `fetch_without_cert_validation=true`; never send command text containing credentials or tokens | HIGH |
 | Fetch over plain HTTP in scripts | metadata only; never read script source | not agent-verifiable directly. A trusted local scanner may return only a sanitized protocol classification such as `scheme=http`; never send the raw URL if it can contain credentials or tokens | HIGH |
 | Unknown schedule | `/system scheduler print proplist=name,start-time,interval,policy,run-count,next-run` | unknown or unexpected task, especially startup jobs. Never read `on-event` because it can contain inline secrets | CRITICAL |
-| Orphan script | `/system script print detail` (`last-started`, `run-count`) | script with a high `run-count` and no visible scheduler — called by another path | HIGH |
+| Orphan script | `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count` | script with a high `run-count` and no visible scheduler — called by another path. Never read `source` to investigate it in the agent | HIGH |
 
 Scheduler and script are where an intruder's persistence lives. A finding here is **never** LOW.
 
