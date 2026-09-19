@@ -56,14 +56,20 @@ Instale `routeros-audit-method` e `routeros-factory-defaults` junto com qualquer
 
 ## Instalar
 
-Copie as pastas que quiser para o diretório de skills do seu agente:
+Clone uma vez e exponha as mesmas pastas de skill para o agente utilizado:
 
 ```bash
 git clone https://github.com/fabioKoruja00/routeros-security-skills
-cp -r routeros-security-skills/routeros-* ~/.claude/skills/
 ```
 
-Ou por projeto: `<repo>/.claude/skills/`.
+- **Claude Code**: copie ou crie symlinks das pastas `routeros-*` escolhidas em `~/.claude/skills/` ou `<repo>/.claude/skills/`.
+- **Codex**: use `$HOME/.agents/skills/` ou `<repo>/.agents/skills/`.
+- **Google Antigravity**: use `~/.gemini/config/skills/` globalmente ou `<repo>/.agents/skills/` por projeto.
+- **ChatGPT Skills**: cada skill já inclui `agents/openai.yaml` além do `SKILL.md` comum.
+
+Não mantenha quatro cópias diferentes da lógica. Este repositório deve continuar sendo a fonte única e, quando possível, use symlinks.
+
+Veja [COMPATIBILITY.md](COMPATIBILITY.md) para os padrões de instalação e observações.
 
 ## O que as skills produzem
 
