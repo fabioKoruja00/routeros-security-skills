@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-vpn
-description: "Read-only audit of tunnels and cryptography on MikroTik RouterOS: PPTP, L2TP without IPsec, PPP authentication and encryption, PPPoE server and client hardening, Quick Set and Back To Home remote access, weak tunnel secrets, SSTP and OVPN cipher settings, IPsec proposals, IKEv1 aggressive mode, PFS, WireGuard peers and preshared keys, VXLAN, ZeroTier, EoIP, port knocking. This skill should be used when assessing VPN and tunnel exposure on a RouterOS device without changing configuration."
+description: "Read-only audit of tunnels and cryptography on MikroTik RouterOS: PPTP, L2TP without IPsec, PPP authentication and encryption, PPPoE server and client hardening, Quick Set and Back To Home remote access, tunnel credential handling without reading secrets, SSTP and OVPN cipher settings, IPsec proposals, IKEv1 aggressive mode, PFS, WireGuard peers and preshared keys, VXLAN, ZeroTier, EoIP, port knocking. This skill should be used when assessing VPN and tunnel exposure on a RouterOS device without changing configuration."
 ---
 
 # RouterOS security audit — tunnels and cryptography
@@ -9,7 +9,7 @@ Every tunnel is an entry path. The findings that matter: protocols broken beyond
 
 ## Rules
 
-Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `remove`, `enable`, `disable`, `reboot`. Connect with a dedicated least-privilege audit account; do not assume the built-in `read` group is strictly read-only. Audit only the devices that were named. Secrets never enter the report (use `proplist` on areas that store credentials). Method, severity scale (CRITICAL / HIGH / MEDIUM / LOW — in doubt, the lower), output format and the collection order live in `routeros-audit-method`; factory values in `routeros-factory-defaults`. Read the RouterOS version first: v6 and v7 menus differ, and a command in the wrong menu returns empty.
+Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `remove`, `enable`, `disable`, `reboot`. Connect with a dedicated least-privilege audit account; do not assume the built-in `read` group is strictly read-only. Audit only the devices that were named. Secrets never enter agent context or the report; use explicit `proplist` fields on credential-bearing areas and never request secret values. Method, severity scale (CRITICAL / HIGH / MEDIUM / LOW — in doubt, the lower), output format and the collection order live in `routeros-audit-method`; factory values in `routeros-factory-defaults`. Read the RouterOS version first: v6 and v7 menus differ, and a command in the wrong menu returns empty.
 
 ## Checks
 
