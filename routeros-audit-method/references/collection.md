@@ -35,5 +35,5 @@ Read-only sequence to gather the baseline before judging any item:
 /file print detail
 ```
 
-`/export verbose` complements, **does not replace** the targeted prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) during normal AI-assisted collection. What only appears in `print`
+`/export verbose` complements, **does not replace** the targeted prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) in any agent-assisted collection. There is no sensitive-review mode and no secret value may enter agent context. What only appears in `print`
 is listed in `routeros-audit-ip-settings` and in `routeros-factory-defaults`.
