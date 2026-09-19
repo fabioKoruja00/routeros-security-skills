@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit Firewall"
+  short_description: "Audit RouterOS IPv4 firewall, NAT, mangle, FastTrack and rule behavior."
