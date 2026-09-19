@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-wireless
-description: "Read-only security audit of wireless interfaces on MikroTik RouterOS: legacy driver (/interface wireless) versus the wifi-qcom stack (/interface wifi), authentication and ciphers (open default profile, WEP, WPA1, TKIP, PMF, PMKID, WPS, EAP), who can read the PSK, client admission (access-list order, MAC-only control, OUI masks, client isolation, evil twin), operating modes and L2 bridging (WDS, station-bridge, NV2), regulatory/RF with security effect, and evidence from the registration table. This skill should be used when a RouterOS access point or station must be assessed without changing configuration and without knocking clients off the air. CAPsMAN is covered by routeros-audit-capsman."
+description: "Read-only security audit of wireless interfaces on MikroTik RouterOS: legacy driver (/interface wireless) versus the wifi-qcom stack (/interface wifi), authentication and ciphers (open default profile, WEP, WPA1, TKIP, PMF, PMKID, WPS, EAP), credential exposure controls without reading PSKs, client admission (access-list order, MAC-only control, OUI masks, client isolation, evil twin), operating modes and L2 bridging (WDS, station-bridge, NV2), regulatory/RF with security effect, and evidence from the registration table. This skill should be used when a RouterOS access point or station must be assessed without changing configuration and without knocking clients off the air. CAPsMAN is covered by routeros-audit-capsman."
 ---
 
 # RouterOS security audit — wireless interfaces
@@ -19,7 +19,7 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 
 ## Traps
 
-- **`print detail` on security-profiles, access-list (PPSK) and `/radius` shows the keys.** Use `proplist`.
+- **Never use `print detail` on security profiles, PPSK access lists or RADIUS.** Those views can expose keys. Use explicit `proplist` fields that exclude PSK/PPSK/RADIUS secret values.
 - **`default-authentication=no` with an empty access-list drops the whole fleet**, including the client you administer from.
 - **`pmf=required` on a WPA2 network disconnects legacy clients**; with WPA2 the useful value is `allowed`.
 - **The registration table proves the state; the profile only declares the intention.**
