@@ -67,17 +67,17 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| v6 BGP without input filter | `/routing bgp connection print detail` (`input.filter`) | empty on a carrier session: accepts bogons, default and third-party prefixes | CRITICAL |
+| v6 BGP without input filter | `/routing bgp connection print proplist=name,remote.address,remote.as,input.filter,output.filter,listen,disabled` | empty on a carrier session: accepts bogons, default and third-party prefixes | CRITICAL |
 | v6 BGP without output filter | same (`output.filter`, `output.network`) | announcement backed only by an address-list — if the list grows, someone else's prefix is announced | HIGH |
 | Dirty announcement address-list | `/ipv6 firewall address-list print where list=<announce list>` | entry that does not belong to the organisation | CRITICAL |
-| Session without MD5 | `/routing bgp connection print detail` (presence of `tcp-md5-key`, never the value) | empty on a session crossing a third party's network | HIGH |
+| Session without MD5 | `/routing bgp connection print count-only where tcp-md5-key=""` plus safe session `proplist` | empty on a session crossing a third party's network | HIGH |
 | Aggregate without blackhole | `/ipv6 route print where blackhole` | aggregated prefix announced without a local discard route: loop and sub-route leak | MEDIUM |
 | Strange default | `/ipv6 route print where dst-address="::/0"` | more than one default, or an unplanned dynamic default | HIGH |
 | Route volume out of the expected | `/ipv6 route print count-only where bgp` | session that should bring only default bringing a table | HIGH |
-| OSPFv3 on a customer interface | `/routing ospf interface-template print detail` | template with empty `interfaces` (matches everything) or `passive=no` on a customer port: anyone forms an adjacency and injects routes | CRITICAL |
+| OSPFv3 on a customer interface | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,network-type,passive,cost,priority,disabled` | template with empty `interfaces` (matches everything) or `passive=no` on a customer port: anyone forms an adjacency and injects routes | CRITICAL |
 | OSPFv3 without authentication | same command (presence of `auth`) | open neighborship on an untrusted segment | HIGH |
 | Redistribution on a concentrator | `/routing ospf instance print detail` | `redistribute` including `connected` on a PPPoE concentrator: injects one route per client | HIGH |
-| PTP link as broadcast | `/routing ospf interface-template print detail` (`network-type`) | `broadcast` on point-to-point: allows DR election by an untrusted node on the segment | MEDIUM |
+| PTP link as broadcast | safe OSPF interface-template `proplist` including `network-type` | `broadcast` on point-to-point: allows DR election by an untrusted node on the segment | MEDIUM |
 
 ## 6. Transition and tunnels
 
