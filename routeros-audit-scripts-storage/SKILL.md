@@ -18,7 +18,7 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 ## Traps
 
 - **`/tool fetch` does not verify certificates by default** (`check-certificate=no`, even over HTTPS).
-- **v7 hides sensitive values in normal exports; v6 shows them unless `hide-sensitive` is given.** The dangerous cases are a v6 export without `hide-sensitive`, a v7 `show-sensitive`, manually embedded credentials, or scripts that write secret-bearing content to `/file`. Never reveal sensitive values during normal AI-assisted collection.
+- **v7 hides sensitive values in normal exports; v6 shows them unless `hide-sensitive` is given.** The dangerous cases are a v6 export without `hide-sensitive`, a v7 `show-sensitive`, manually embedded credentials, or scripts that write secret-bearing content to `/file`. Never reveal sensitive values during any AI-assisted collection. There is no sensitive-review mode for agents.
 - **A script without a scheduler is not suspicious by itself** — it may be called by Netwatch, a DHCP lease script, PPP `on-up` or the mode button. Find the caller before accusing.
 - **Never open `.rsc`, script source, scheduler `on-event`, backup contents or other files merely to look for secrets.** Use provenance and metadata only; secret-bearing content must remain outside agent context.
 - **A script that nobody recognises is a possible compromise:** recommend investigation before removal.
