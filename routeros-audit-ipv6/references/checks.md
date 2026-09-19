@@ -1,6 +1,6 @@
 # IPv6 checks
 
-Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only.
+Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Method and output format: `routeros-audit-method`.
 
 ## 1. Stack state
 

@@ -3,6 +3,7 @@ name: routeros-factory-defaults
 description: "Factory default values of MikroTik RouterOS v7 that a security review must know before judging any setting: /ip settings, /ipv6 settings, connection tracking timeouts, device-mode restrictions, the default firewall (defconf) per chain, the bogon address-lists from the official 'Building Advanced Firewall' guide, and the services the vendor tells you to disable. This skill should be used before opening a finding on a RouterOS device, to tell 'someone turned this on' apart from 'this is how it ships' — the severity and the wording change."
 ---
 
+
 # RouterOS factory defaults
 
 Read this before opening any finding. A value equal to the factory default is not an insecure

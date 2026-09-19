@@ -1,21 +1,36 @@
 # routeros-security-skills
 
 Skills de auditoria de segurança **somente leitura** para MikroTik RouterOS (v6/v7), empacotadas
-para agentes de IA (Claude Code e carregadores de skill compatíveis). Uma pasta por tema; cada
-skill é autocontida e instalável sozinha. A documentação das skills é em inglês.
+para agentes de IA (Claude Code e carregadores de skill compatíveis). Uma pasta por domínio (21
+skills); cada skill é autocontida e instalável sozinha. A documentação das skills é em inglês.
 
 [Read in English](README.md)
 
 ## O que tem aqui
 
-| Skill | Cobre |
+| Skill | Domínio |
 |---|---|
-| [`routeros-factory-defaults`](routeros-factory-defaults/) | Valor de fábrica de `/ip settings`, `/ipv6 settings`, connection tracking, device-mode, firewall padrão (defconf) por chain, listas de bogon do guia oficial de firewall avançado e os serviços que o fabricante manda desligar. Ler antes de abrir qualquer achado. |
-| [`routeros-audit-core`](routeros-audit-core/) | Acesso administrativo e serviços expostos, serviços auxiliares, política das chains do firewall, RAW e defesa de flood, ICMP por tipo, camada 2 / MNDP / bridge / VLAN, DHCP, pilha IP, túneis e cifras, QoS com efeito de segurança, sequência de coleta em bloco. |
-| [`routeros-audit-ipv6`](routeros-audit-ipv6/) | Estado da pilha, RA/ND, firewall IPv6, DHCPv6 e delegação de prefixo, roteamento IPv6, mecanismos de transição, plano de endereçamento, cabeçalhos de extensão. |
-| [`routeros-audit-routing`](routeros-audit-routing/) | OSPF, BGP (sessão, filtros, atributos, vazamento, reflexão), RPKI, MPLS/LDP, isolamento de VPLS e L3VPN, traffic engineering, plano de controle sob saturação, mapa de menus v6↔v7 e armadilhas silenciosas de sintaxe. |
-| [`routeros-audit-wireless`](routeros-audit-wireless/) | Driver legado × `wifi-qcom`, autenticação e cifras, quem lê a PSK, admissão de cliente, modos de operação, CAPsMAN (confiança, segmentação, versões), regulatório e RF, evidência pela registration table. |
-| [`routeros-audit-automation`](routeros-audit-automation/) | Script, scheduler e fetch, arquivos e backups no disco, container, log e NTP, SNMP, AAA/RADIUS, certificados, procedimento seguro durante incidente. |
+| [`routeros-audit-method`](routeros-audit-method/) | Como rodar a auditoria: regras invioláveis, o que ler antes de julgar, ordem de coleta, escala de severidade, formato de saída, armadilhas de campo, procedimento em incidente. **Ler primeiro.** |
+| [`routeros-factory-defaults`](routeros-factory-defaults/) | Valores de fábrica de `/ip settings`, `/ipv6 settings`, connection tracking, device-mode, firewall padrão por chain, listas oficiais de bogon e os serviços que o fabricante manda desligar. |
+| [`routeros-audit-access`](routeros-audit-access/) | Acesso administrativo: serviços e restrição de origem, SSH, usuários/grupos/chaves, RouterBOOT, device-mode, grupo default do AAA, botão físico, supout, gráficos, versão. |
+| [`routeros-audit-services`](routeros-audit-services/) | Serviços auxiliares: mac-server, MNDP, bandwidth test, cache DNS, DoH, proxy, SOCKS, UPnP, cloud/DDNS, RoMON. |
+| [`routeros-audit-firewall`](routeros-audit-firewall/) | Política das chains filter/NAT/mangle: input/forward, bogons, anti-spoof, flags TCP, zonas, contadores, fasttrack, NAT, ALG, listas por FQDN, log de drop. |
+| [`routeros-audit-flood-defense`](routeros-audit-flood-defense/) | Tabela RAW, SYN flood, detecção de DDoS, amplificação, port scan, blacklist de força bruta, exaustão de conntrack, ICMP por tipo. |
+| [`routeros-audit-layer2`](routeros-audit-layer2/) | MNDP, tabela de vizinhos, DHCP snooping, RA Guard, horizon, BPDU guard, STP, filtro de bridge e hardware offload, VLAN filtering, PVID, limite de MAC. |
+| [`routeros-audit-dhcp`](routeros-audit-dhcp/) | Alertas do servidor DHCP, esgotamento de pool, lease estático, add-arp, lease script, confiança do cliente DHCP. |
+| [`routeros-audit-ip-settings`](routeros-audit-ip-settings/) | Valores de `/ip settings` que só aparecem no print: rp-filter, redirects, source route, forwarding, limite de ARP, taxa de ICMP. |
+| [`routeros-audit-vpn`](routeros-audit-vpn/) | PPTP, L2TP/IPsec, PPP, PPPoE, Quick Set e Back To Home, SSTP, OVPN, IPsec, WireGuard, VXLAN, ZeroTier, EoIP, port knocking. |
+| [`routeros-audit-qos`](routeros-audit-qos/) | Filas com efeito de segurança: prioridade da gerência, garantias, PCQ, fila morta, filas dinâmicas, bufferbloat. |
+| [`routeros-audit-ipv6`](routeros-audit-ipv6/) | Pilha IPv6, RA/ND, firewall IPv6, DHCPv6/PD, roteamento IPv6, transição, endereçamento, cabeçalhos de extensão. |
+| [`routeros-audit-ospf`](routeros-audit-ospf/) | Vizinhança OSPF, tipos de rede, áreas, redistribuição, enxurrada de /32 do PPPoE, mapa de menus v6↔v7. |
+| [`routeros-audit-bgp`](routeros-audit-bgp/) | Sessões BGP, filtros, atributos, vazamentos, reflexão, confederação, RPKI, armadilhas silenciosas v6↔v7. |
+| [`routeros-audit-mpls`](routeros-audit-mpls/) | LDP, VPLS, isolamento de L3VPN, traffic engineering, plano de controle sob saturação. |
+| [`routeros-audit-wireless`](routeros-audit-wireless/) | Interfaces wireless (legado e wifi-qcom): cifras, exposição da PSK, admissão de cliente, modos, regulatório, registration table. |
+| [`routeros-audit-capsman`](routeros-audit-capsman/) | CAPsMAN: confiança CAP–controlador, descoberta, provisionamento, datapaths, versões, CA automático. |
+| [`routeros-audit-scripts-storage`](routeros-audit-scripts-storage/) | Scripts, scheduler, fetch, arquivos e backups no disco, SMB, discos, containers. |
+| [`routeros-audit-logging`](routeros-audit-logging/) | Log, NTP, e-mail, Netwatch, SNMP. |
+| [`routeros-audit-aaa`](routeros-audit-aaa/) | RADIUS, CoA, grupo default do AAA, segredos PPP, User Manager. |
+| [`routeros-audit-certificates`](routeros-audit-certificates/) | Armazém de certificados e seu uso pelos serviços. |
 
 Cada checagem é uma linha de tabela com: **comando de leitura**, **o que caracteriza falha** e
 **severidade sugerida** (CRITICAL / HIGH / MEDIUM / LOW). Todo arquivo termina com a nuance que

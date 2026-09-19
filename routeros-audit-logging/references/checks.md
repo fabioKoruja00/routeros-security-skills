@@ -1,0 +1,28 @@
+# Logging, time and SNMP checks
+
+Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Method and output format: `routeros-audit-method`.
+
+## 1. Log and time
+
+| Check | Read command | Characterises a failure | Sev. |
+|---|---|---|---|
+| Log only in memory | `/system logging print detail` and `/system logging action print detail` | no `remote` action: a reboot erases everything, and whoever breaks in reboots | HIGH |
+| Critical topic not logged | `/system logging print detail` | absence of `account`, `critical`, `error`, `warning` (and `firewall` where a rule has `log=yes`) | HIGH |
+| Remote log not arriving | `/system logging action print detail` + count on the collector | `remote` action configured pointing to an IP that no longer receives — **the system lies about its own state** | CRITICAL |
+| NTP off | `/system ntp client print` and `/system clock print` | `enabled=no` or clock out of time: invalidates TLS certificates, breaks RPKI/DNSSEC and makes the log useless for forensics | HIGH |
+| Open NTP server | `/system ntp server print` and `/ip firewall filter print detail` | `enabled=yes` reachable from the WAN — amplification vector | HIGH |
+| Debug on permanently | `/system logging print detail where topics~"debug\|packet\|raw"` | debug/packet/raw topic logging non-stop: leaks traffic content and fills the disk | HIGH |
+| E-mail without TLS or with a credential | `/tool e-mail print proplist=address,port,tls,from,vrf` | `tls=no`, or an SMTP password stored and reachable by anyone with read access | HIGH |
+| Evidence never handled | `/log print without-paging where topics~"account\|critical\|error\|warning"` | serial failed logins, unexpected reboot or configuration change recorded and never looked at | HIGH |
+| Netwatch with broad action | `/tool netwatch print detail` | `on-down`/`on-up` running a script with more permission than needed | MEDIUM |
+
+## 2. SNMP and monitoring
+
+| Check | Read command | Characterises a failure | Sev. |
+|---|---|---|---|
+| Default community | `/snmp community print detail` | `public` or `private` still present and enabled | CRITICAL |
+| No source restriction | `/snmp community print detail` | `addresses=0.0.0.0/0` (or `::/0`, which is the factory value) — the MIB hands out interfaces, IPs, clients, traffic and topology | HIGH |
+| Write enabled | `/snmp community print detail` | `write-access=yes`: **the device can be reconfigured over SNMP**, and with a default community that is open administrative access | CRITICAL |
+| Unprotected trap | `/snmp print` | `trap-version=1` or `2`, with a default community, leaving the management network | MEDIUM |
+| v1/v2c on an untrusted network | `/snmp print` and `/snmp community print detail` | `security=none` outside an isolated management network | HIGH |
+| Trap to the wrong destination | `/snmp print` (`trap-target`) | trap leaving to an IP that is not the current collector | MEDIUM |

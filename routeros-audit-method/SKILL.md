@@ -1,12 +1,12 @@
 ---
-name: routeros-audit-core
-description: "Read-only security audit of MikroTik RouterOS (v6/v7) — the core checklist: exposed services and administrative access, auxiliary services nobody remembers to disable, firewall chain policy, RAW table and flood defence, ICMP by type, layer 2 / MNDP / bridge / VLAN, DHCP, the IP stack settings that only show in print, tunnels and ciphers (PPTP, L2TP, SSTP, OVPN, IPsec, WireGuard, VXLAN, ZeroTier, EoIP), and QoS with security effect. Every check carries the read command, what characterises a failure, and a suggested severity. This skill should be used when asked to audit, review, harden or assess the security of a RouterOS device without changing its configuration."
+name: routeros-audit-method
+description: "How to run a read-only security audit on MikroTik RouterOS without changing or knocking down the device: the rules that cannot be broken (no write command, secrets never in the report, read-group user, named targets only), what to read before judging (version, factory default, device role), collection order and the bulk read-only sequence, the severity scale (CRITICAL / HIGH / MEDIUM / LOW) and how to classify, the output format per device, the traps measured in the field, and the safe procedure during an incident. This skill should be used first, before any routeros-audit-* skill, and whenever a finding needs to be classified or reported."
 ---
 
-# RouterOS security audit — core
+# RouterOS security audit — method
 
-Read-only assessment of a RouterOS device. Every command in the reference is a `print`, `get`,
-`export` or `monitor`. The skill diagnoses; it never fixes.
+The shared method behind every `routeros-audit-*` skill. Every command in those skills is a
+`print`, `get`, `export` or `monitor`. The audit diagnoses; it never fixes.
 
 ## Rules that cannot be broken
 
@@ -30,7 +30,7 @@ Read-only assessment of a RouterOS device. Every command in the reference is a `
    between v6 and v7 (BGP, OSPF, route filters, wireless vs wifi). A command in the wrong menu
    returns empty, and empty looks like "not configured" — the audit then accuses the absence of
    something that exists.
-2. **Read the factory default.** Use the `routeros-factory-defaults` skill (or the vendor docs).
+2. **Read the factory default.** Use the `routeros-factory-defaults` skill.
    A value equal to the default is not somebody's insecure choice: it changes the severity and
    the wording ("nobody enabled the protection" vs "someone disabled it").
 3. **Read the role of the device.** Edge router, concentrator, switch, AP and multihomed core do
@@ -40,7 +40,8 @@ Read-only assessment of a RouterOS device. Every command in the reference is a `
 
 One topic per connection. Start with what depends on nothing (`/ip service`, `/ip settings`,
 `/tool mac-server`), then the areas that require walking rule lists (`/ip firewall/*`). The
-bulk read-only sequence is at the end of [references/checks.md](references/checks.md).
+bulk read-only sequence is in [references/collection.md](references/collection.md); the safe
+procedure during an incident is in [references/incident.md](references/incident.md).
 
 `/export verbose hide-sensitive` **complements, never replaces** the prints: `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
@@ -74,17 +75,6 @@ to the device. No write command ready to paste: a path, not a recipe.
 A finding repeated across several devices becomes **one** item with the list of affected
 devices, not one item per device.
 
-## Checks
-
-[references/checks.md](references/checks.md) — sections: administrative access (1), auxiliary
-services (2), firewall chain policy (3), RAW and flood (4), ICMP by type (5), layer 2 and
-bridge (6), DHCP (7), IPv6 summary (8), IP stack (9), crypto and tunnels (10), QoS (11), bulk
-collection (12). Read the section before auditing the area — the list is long and memory of it
-ages.
-
-Companion skills for the other areas: `routeros-audit-ipv6`, `routeros-audit-routing`,
-`routeros-audit-wireless`, `routeros-audit-automation`.
-
 ## Measured traps
 
 - **`/export` does not show everything.** `/ip/settings`, the per-service `Available From`,
@@ -115,3 +105,28 @@ Companion skills for the other areas: `routeros-audit-ipv6`, `routeros-audit-rou
 - **A sample password from training material is not a recommendation.** A short, generic value
   (`demo`, `test`, a digit sequence) found in production is a critical finding, not a reference
   configuration.
+
+## Domain skills
+
+| Skill | Domain |
+|---|---|
+| `routeros-factory-defaults` | factory values to read before judging |
+| `routeros-audit-access` | administrative access, users, device-mode |
+| `routeros-audit-services` | auxiliary services (DNS, proxy, SOCKS, UPnP, mac-server, RoMON) |
+| `routeros-audit-firewall` | filter/NAT/mangle chain policy |
+| `routeros-audit-flood-defense` | RAW, flood, brute force, ICMP by type |
+| `routeros-audit-layer2` | MNDP, bridge, VLAN, STP |
+| `routeros-audit-dhcp` | DHCP server and client |
+| `routeros-audit-ip-settings` | /ip settings (print-only values) |
+| `routeros-audit-vpn` | tunnels, PPP, IPsec, WireGuard, overlays |
+| `routeros-audit-qos` | queues with a security effect |
+| `routeros-audit-ipv6` | IPv6 stack, firewall, RA/ND, DHCPv6, transition |
+| `routeros-audit-ospf` | OSPF |
+| `routeros-audit-bgp` | BGP and RPKI |
+| `routeros-audit-mpls` | MPLS, LDP, VPLS, L3VPN, TE |
+| `routeros-audit-wireless` | wireless interfaces (legacy and wifi-qcom) |
+| `routeros-audit-capsman` | CAPsMAN |
+| `routeros-audit-scripts-storage` | scripts, scheduler, files, containers |
+| `routeros-audit-logging` | logging, NTP, SNMP |
+| `routeros-audit-aaa` | RADIUS, PPP secrets, User Manager |
+| `routeros-audit-certificates` | certificate store |
