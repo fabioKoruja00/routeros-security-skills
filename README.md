@@ -56,14 +56,20 @@ Install `routeros-audit-method` and `routeros-factory-defaults` together with an
 
 ## Install
 
-Copy the folders you want into your agent's skills directory:
+Clone once, then expose the same skill folders to the agent you use:
 
 ```bash
 git clone https://github.com/fabioKoruja00/routeros-security-skills
-cp -r routeros-security-skills/routeros-* ~/.claude/skills/
 ```
 
-Or per project: `<repo>/.claude/skills/`.
+- **Claude Code**: copy or symlink the selected `routeros-*` folders into `~/.claude/skills/` or `<repo>/.claude/skills/`.
+- **Codex**: copy or symlink them into `$HOME/.agents/skills/` or `<repo>/.agents/skills/`.
+- **Google Antigravity**: copy or symlink them into `~/.gemini/config/skills/` globally or `<repo>/.agents/skills/` for a project.
+- **ChatGPT Skills**: each skill already includes `agents/openai.yaml` UI metadata in addition to the common `SKILL.md`.
+
+Do not maintain separate copies of the skill logic for each agent. Keep this repository as the single source of truth and use symlinks where practical.
+
+See [COMPATIBILITY.md](COMPATIBILITY.md) for installation patterns and notes.
 
 ## Output the skills produce
 
