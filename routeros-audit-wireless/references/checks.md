@@ -75,7 +75,7 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Associated client nobody knows | `/interface wireless registration-table print proplist=interface,mac-address,ap,signal-strength,signal-to-noise,tx-rate,rx-rate,last-ip,uplink,uptime` or `/caps-man registration-table print proplist=interface,mac-address,signal,tx-rate,rx-rate,last-ip,uptime` | MAC outside the inventory, `last-ip` outside the range, distance incompatible with the coverage, or a weak cipher in use — **the table proves the state; the profile only declares the intention** | HIGH |
+| Associated client nobody knows | `/interface wireless registration-table print proplist=interface,mac-address,ap,signal-strength,signal-to-noise,tx-rate,rx-rate,distance,authentication-type,encryption,group-encryption,last-ip,uplink,uptime` or `/caps-man registration-table print proplist=interface,mac-address,signal,tx-rate,rx-rate,authentication-type,encryption,last-ip,uptime` | MAC outside the inventory, `last-ip` outside the range, distance incompatible with the coverage, or a weak cipher in use — **the table proves the state; the profile only declares the intention** | HIGH |
 | AP in the controller list that is not yours | `/caps-man remote-cap print proplist=identity,address,base-mac,board,version,state` | unknown device in state `Run` | HIGH |
 | Unprovisioned radio | `/caps-man radio print` | radio listed without the provisioned mark: does not radiate, and nobody notices | MEDIUM |
 | Sniffer on | `/interface wireless sniffer print` | `streaming-enabled=yes` or `server` pointing to an unplanned host: network frames leaving over TZSP | HIGH |

@@ -79,7 +79,9 @@ the risk of losing access to the device. A path, not a paste-ready recipe.
 
 ## Sources and disclaimer
 
-Technical RouterOS behavior, command semantics and sensitive-parameter handling are validated against official MikroTik documentation and public standards. Audit heuristics, severity suggestions and operational guidance may also reflect documented field practice. Independent material, not affiliated with, endorsed by or certified by MikroTik. Commands, menus and defaults change
+Everything in this repository comes from official, public sources: the MikroTik RouterOS
+documentation and public standards. Independent material, not affiliated with, endorsed by or
+certified by MikroTik. Commands, menus and defaults change
 between RouterOS releases — confirm on the installed version before acting on any finding.
 
 ## License

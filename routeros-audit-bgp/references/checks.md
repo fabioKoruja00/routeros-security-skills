@@ -6,7 +6,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Session without MD5 | `/routing bgp connection print count-only where tcp-md5-key=""` (v7) / equivalent presence-only check on v6; use explicit non-secret `proplist` for peer/session metadata | key empty on a session crossing a third party's network | HIGH |
+| Session without MD5 | `/routing bgp connection print count-only where tcp-md5-key=""` (v7) / `/routing bgp peer print count-only where tcp-md5-key=""` (v6); use explicit non-secret `proplist` for peer/session metadata | key empty on a session crossing a third party's network | HIGH |
 | GTSM off | `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,ttl-security,max-prefix-limit,listen,disabled` (v7) / equivalent safe `proplist` on v6 | `ttl-security=no` on a directly connected eBGP peer: a forged packet from afar reaches port 179 | MEDIUM |
 | No prefix ceiling | same safe `proplist` | `max-prefix-limit` empty on an eBGP peer — a full-table leak exhausts RAM | HIGH |
 | Peer accepting any ASN (v7) | `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,ttl-security,max-prefix-limit,listen,disabled` | `remote.as` empty with `listen` on: v7 discovers the ASN from the OPEN message and closes with whoever arrives | HIGH |
