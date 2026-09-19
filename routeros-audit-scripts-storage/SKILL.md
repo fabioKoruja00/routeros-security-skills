@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-scripts-storage
-description: "Read-only audit of persistence and storage on MikroTik RouterOS: secrets inside scripts, export with show-sensitive in routines, backups leaving over FTP, scripts that do not require permissions or hold broad policies, fetch without certificate validation or over plain HTTP, unknown scheduler entries and orphan scripts, .rsc and unencrypted .backup files on disk, cloud backup and DDNS, SMB, unplanned disks, degraded RAID, ROSE, and containers (limits, root-dir on flash, veth on the management bridge, unpinned images). This skill should be used when auditing what runs by itself inside a RouterOS device and what it keeps, without changing configuration."
+description: "Read-only audit of persistence and storage on MikroTik RouterOS: credential-bearing scripts without reading their source, risky export modes, backups leaving over FTP, scripts that do not require permissions or hold broad policies, fetch without certificate validation or over plain HTTP, unknown scheduler entries and orphan scripts, .rsc and unencrypted .backup files on disk, cloud backup and DDNS, SMB, unplanned disks, degraded RAID, ROSE, and containers (limits, root-dir on flash, veth on the management bridge, unpinned images). This skill should be used when auditing what runs by itself inside a RouterOS device and what it keeps, without changing configuration."
 ---
 
 # RouterOS security audit — scripts, scheduler, files and containers
@@ -20,5 +20,5 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 - **`/tool fetch` does not verify certificates by default** (`check-certificate=no`, even over HTTPS).
 - **v7 hides sensitive values in normal exports; v6 shows them unless `hide-sensitive` is given.** The dangerous cases are a v6 export without `hide-sensitive`, a v7 `show-sensitive`, manually embedded credentials, or scripts that write secret-bearing content to `/file`. Never reveal sensitive values during normal AI-assisted collection.
 - **A script without a scheduler is not suspicious by itself** — it may be called by Netwatch, a DHCP lease script, PPP `on-up` or the mode button. Find the caller before accusing.
-- **An `.rsc` in `/file` may be the team's legitimate restore routine.** The finding survives only if the file has a secret inside.
+- **Never open `.rsc`, script source, scheduler `on-event`, backup contents or other files merely to look for secrets.** Use provenance and metadata only; secret-bearing content must remain outside agent context.
 - **A script that nobody recognises is a possible compromise:** recommend investigation before removal.
