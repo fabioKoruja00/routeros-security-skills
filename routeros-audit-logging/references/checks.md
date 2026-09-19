@@ -14,7 +14,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Debug on permanently | `/system logging print detail where topics~"debug\|packet\|raw"` | debug/packet/raw topic logging non-stop: leaks traffic content and fills the disk | HIGH |
 | E-mail without TLS or with a credential | `/tool e-mail print proplist=address,port,tls,from,vrf` | `tls=no`, or an SMTP password stored and reachable by anyone with read access | HIGH |
 | Evidence never handled | `/log print without-paging where topics~"account\|critical\|error\|warning"` | serial failed logins, unexpected reboot or configuration change recorded and never looked at | HIGH |
-| Netwatch with broad action | `/tool netwatch print detail` | `on-down`/`on-up` running a script with more permission than needed | MEDIUM |
+| Netwatch actions present | `/tool netwatch print proplist=name,host,type,interval,timeout,status,disabled` + presence-only counts for `up-script`, `down-script` and `test-script` | action scripts exist but their bodies must never enter the agent. Assess only presence, target and schedule unless a trusted local scanner returns sanitized classifications | MEDIUM |
 
 ## 2. SNMP and monitoring
 
