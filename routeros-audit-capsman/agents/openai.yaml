@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit CAPsMAN"
+  short_description: "Audit CAPsMAN trust, discovery, provisioning, datapath and certificate behavior."
