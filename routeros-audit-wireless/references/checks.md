@@ -6,7 +6,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read (legacy) | Read (wifi) | Characterises a failure | Sev. |
 |---|---|---|---|---|
-| `default` profile in production | `/interface wireless print detail` + `/interface wireless security-profiles print detail` | `/interface wifi print detail` + `/interface wifi security print detail` | interface pointing to the `default` profile, which **ships `mode=none`** — an open network nobody chose | CRITICAL |
+| `default` profile in production | `/interface wireless print proplist=name,security-profile,disabled` + `/interface wireless security-profiles print proplist=name,mode,authentication-types,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | use explicit non-secret `proplist` fields on `/interface wifi` and `/interface wifi security`; never request passphrases/PSKs | interface pointing to a default/open security profile — an open network nobody chose | CRITICAL |
 | WEP / static key | `/interface wireless security-profiles print detail` | `/interface wifi security print detail` | `mode=static-keys-required` or `static-keys-optional` | CRITICAL |
 | WPA1 still accepted | same | same | `authentication-types` with `wpa-psk` (without the `2`) — common "for compatibility", ticked together with WPA2 | HIGH |
 | TKIP on unicast | same | same | `unicast-ciphers` with `tkip` | HIGH |
