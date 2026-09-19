@@ -79,11 +79,9 @@ the risk of losing access to the device. A path, not a paste-ready recipe.
 
 ## Sources and disclaimer
 
-The checks, factory values and traps in this repository are derived from the official MikroTik
-RouterOS documentation (help.mikrotik.com) — in particular the *Securing your router*,
-*Building Advanced Firewall*, *Bridge Hardware Offloading*, *Device-mode*, *IPv6 Settings*,
-*Connection tracking* and per-menu reference pages. Independent material, not affiliated with,
-endorsed by or certified by MikroTik. Commands, menus and defaults change
+Everything in this repository comes from official, public sources: the MikroTik RouterOS
+documentation and public standards. Independent material, not affiliated with, endorsed by or
+certified by MikroTik. Commands, menus and defaults change
 between RouterOS releases — confirm on the installed version before acting on any finding.
 
 ## License

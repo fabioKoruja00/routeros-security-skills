@@ -79,11 +79,8 @@ uma — inclusive o de perder acesso ao equipamento. Caminho, não receita pront
 
 ## Fontes e aviso
 
-As checagens, valores de fábrica e armadilhas deste repositório derivam da documentação oficial
-do MikroTik RouterOS (help.mikrotik.com) — em especial as páginas *Securing your router*,
-*Building Advanced Firewall*, *Bridge Hardware Offloading*, *Device-mode*, *IPv6 Settings*,
-*Connection tracking* e as referências de cada menu. Material independente, sem vínculo, endosso
-ou certificação da MikroTik. Comandos, menus e defaults mudam entre versões
+Tudo neste repositório vem de fontes oficiais e públicas: a documentação do MikroTik RouterOS e
+padrões públicos. Material independente, sem vínculo, endosso ou certificação da MikroTik. Comandos, menus e defaults mudam entre versões
 do RouterOS — confirmar na versão instalada antes de agir sobre qualquer achado.
 
 ## Licença
