@@ -6,14 +6,14 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Secret inside a script | `/system script print detail` | password, bot token, API key or connection string in the `source` field — any user with read access extracts it | CRITICAL |
-| Export with secrets inside a script | `/system script print detail` and `/system scheduler print detail` | call to `export` with `show-sensitive`: the file comes out with **PPP, wireless and tunnel passwords in cleartext** — and the routine usually mails or FTPs it | CRITICAL |
-| Backup leaving by an insecure path | same commands | routine using `mode=ftp` or a destination that is not the approved repository | CRITICAL |
+| Secret inside a script | normal audit: `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count`; optional sensitive review only with explicit operator authorization | script source may contain passwords, tokens or connection strings. Do not read `source` into the agent context during normal collection; if a sensitive review is authorized, report only that a secret exists, never its value | CRITICAL |
+| Export with secrets inside a script | optional sensitive review only with explicit operator authorization | a script or scheduler action invoking `export show-sensitive` can write credentials into an `.rsc` file. Normal metadata-only collection cannot prove this safely | CRITICAL |
+| Backup leaving by an insecure path | optional sensitive review only with explicit operator authorization | inline script/scheduler actions may disclose destinations or credentials; inspect only when the operator accepts that sensitive content may enter the review context | CRITICAL |
 | Script not requiring permissions | `/system script print detail` | `dont-require-permissions=yes`: a user in a restricted group triggers an action their group would not allow | HIGH |
 | Broad script permission | `/system script print detail` (`policy`) | a simple routine with `policy` containing `password`, `sensitive` or `policy` | HIGH |
-| Fetch without certificate validation | `/system script print detail` and `/system scheduler print detail` | `/tool fetch` call without `check-certificate`: **the official default is `no`, even over HTTPS** — whoever sits on the path swaps the downloaded content and nothing complains | HIGH |
-| Fetch over plain HTTP | same | `url="http://..."` downloading a blocklist, a script or a configuration | HIGH |
-| Unknown schedule | `/system scheduler print detail` | task nobody recognises, `on-event` calling a removed script, or `start-time=startup` with strange content | CRITICAL |
+| Fetch without certificate validation | optional sensitive review only with explicit operator authorization | detect `/tool fetch` calls and verify certificate validation only when script source review is authorized; do not read script source during the normal pass | HIGH |
+| Fetch over plain HTTP | optional sensitive review only with explicit operator authorization | a script downloading executable/configuration content over plain HTTP is unsafe; inspect only in the sensitive pass | HIGH |
+| Unknown schedule | `/system scheduler print proplist=name,start-time,interval,policy,run-count,next-run` | unknown or unexpected task, especially startup jobs. Inspect `on-event` only in the optional sensitive pass because it can contain inline secrets | CRITICAL |
 | Orphan script | `/system script print detail` (`last-started`, `run-count`) | script with a high `run-count` and no visible scheduler — called by another path | HIGH |
 
 Scheduler and script are where an intruder's persistence lives. A finding here is **never** LOW.
@@ -22,7 +22,7 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Exported config sitting on disk | `/file print detail` | `.rsc` file on the device: `export` without `hide-sensitive` writes PPP, IPsec and wireless passwords in cleartext | CRITICAL |
+| Exported config sitting on disk | `/file print detail` | `.rsc` file on the device is not automatically a secret leak: current RouterOS exports hide sensitive values by default. Escalate when provenance shows `show-sensitive`, manual secret insertion, or another process that wrote credentials into the file | HIGH |
 | Binary backup without password | `/file print detail` and `/system backup ...` | `.backup` generated without `password` — restorable by whoever downloads the file | HIGH |
 | Cloud backup without password | `/ip cloud print` | `backups-enabled=yes` without a backup password set | HIGH |
 | DDNS on without use | `/ip cloud print` | `ddns-enabled=yes` publishing the device's public IP without need | MEDIUM |
@@ -31,8 +31,7 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 | Degraded RAID | `/disk raid print` | array in degraded mode: the next failure takes the data with it, and nothing warns | HIGH |
 | ROSE installed without use | `/system package print` and `/disk print detail` | `rose-storage` package present on a device that only routes — file-service surface for no reason | MEDIUM |
 
-`export` without `hide-sensitive` is the most common way to leak the wireless and PPPoE
-password — the file stays in `/file` and nobody remembers it.
+`export` hides sensitive values by default on current RouterOS releases. The dangerous case is an explicit `show-sensitive` export, manually embedded credentials, or another routine that writes secrets into a file.
 
 ## 3. Container (v7)
 
