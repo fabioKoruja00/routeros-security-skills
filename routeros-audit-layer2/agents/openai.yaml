@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit Layer 2"
+  short_description: "Audit bridge, VLAN, STP, DHCP snooping, RA Guard, MNDP and hardware offload."
