@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit VPN"
+  short_description: "Audit PPP, IPsec, WireGuard, SSTP, OVPN, VXLAN, ZeroTier and tunnel security."
