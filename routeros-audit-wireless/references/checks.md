@@ -16,7 +16,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Group key renewal | same | same | `group-key-update` far above the 5-minute default | LOW |
 | Passphrase strength | not agent-verifiable: the passphrase is never retrieved | same | a trusted local scanner may return only a sanitized boolean such as `weak_passphrase=true` (short, digits only, equal to the SSID, vendor documentation example). **The system accepts from 8 characters** | CRITICAL |
 | EAP without certificate validation | `/interface wireless security-profiles print proplist=name,mode,authentication-types,eap-methods,tls-mode` | `/interface wifi security print proplist=name,authentication-types,eap-methods,tls-mode` | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
-| WPS enabled | `/interface wireless print detail` | `/interface wifi print detail` | `wps-mode` other than `disabled` | HIGH |
+| WPS enabled | `/interface wireless print proplist=name,wps-mode,default-authentication,default-forwarding,mode,wireless-protocol,wds-mode,wds-default-bridge,bridge-mode,security-profile,master-interface,vlan-mode,vlan-id,frequency-mode,country,tx-power-mode,tx-power,disabled` | use an explicit non-secret `proplist` on `/interface wifi` | `wps-mode` other than `disabled` | HIGH |
 | WPA3/OWE available and unused | — | `/interface wifi security print proplist=name,authentication-types,management-protection` | hardware with `wifi-qcom` still WPA2 only; never retrieve `passphrase` or other key material | LOW |
 
 `pmf=required` only counts with WPA3; with WPA2 the useful value is `allowed`. Requiring
@@ -37,38 +37,38 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 |---|---|---|---|
 | Permissive final rule | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | last entry **without** `mac-address`, with `authentication=yes forwarding=yes`: a catch-all that authenticates anyone | HIGH |
 | Rule order | same command (the numbering is the evaluation order) | broad permissive rule before the restrictive one — the list stops at the first match | HIGH |
-| Empty list with permissive default | `/interface wireless print detail` + access-list | `default-authentication=yes` and an empty list: only the password stands in the way | MEDIUM |
+| Empty list with permissive default | `/interface wireless print proplist=name,default-authentication,default-forwarding,security-profile,disabled` + access-list | `default-authentication=yes` and an empty list: only the password stands in the way | MEDIUM |
 | MAC as the only control | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | MAC filter without WPA2 underneath — a MAC is sniffed and cloned | HIGH |
 | Allow by OUI | same command | `mac-mask` covering a whole vendor (e.g. `FF:FF:FF:00:00:00`) with `action=accept` | CRITICAL |
-| Client talks to client | `/interface wireless print detail` or `/interface wifi datapath print detail` | `default-forwarding=yes` on a guest, hotspot or public SSID | HIGH |
+| Client talks to client | `/interface wireless print proplist=name,default-forwarding,security-profile,disabled` or explicit non-secret `/interface wifi datapath` `proplist` | `default-forwarding=yes` on a guest, hotspot or public SSID | HIGH |
 | Time-based rule without a clock | access-list + `/system ntp client print` | rule with `time=` on a device with NTP off: the window opens or closes at the wrong time | LOW |
 | Signal floor | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | no `signal-range` on a façade AP — associates whoever is outside the building | LOW |
-| Loose connect-list on the client | `/interface wireless connect-list print detail` | station without a `security-profile` bound: associates to a same-name AP (evil twin) | HIGH |
+| Loose connect-list on the client | `/interface wireless connect-list print proplist=interface,connect,ssid,mac-address,security-profile,signal-range,disabled` | station without a `security-profile` bound: associates to a same-name AP (evil twin) | HIGH |
 
 ## 4. Operating mode and L2 bridging
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Dynamic WDS | `/interface wireless print detail` | `wds-mode=dynamic` with `wds-default-bridge` filled: a neighbouring AP forms an L2 bridge **on its own** | HIGH |
+| Dynamic WDS | safe `/interface wireless print proplist=name,mode,wds-mode,wds-default-bridge,bridge-mode,security-profile,disabled` | `wds-mode=dynamic` with `wds-default-bridge` filled: a neighbouring AP forms an L2 bridge **on its own** | HIGH |
 | Bridge mode on without use | same command | `bridge-mode=enabled` on an end-user access AP — enables `station-bridge` on the other side | MEDIUM |
-| Station in pseudobridge | same command + `/interface bridge port print` | `station-pseudobridge`/`station-bridge` in the same bridge as the internal network: a third party's L2 glued to yours | HIGH |
-| Virtual interface inheriting the open profile | `/interface wireless print detail where master-interface!=""` | virtual SSID with `security-profile=default` | CRITICAL |
-| Radio VLAN in the management bridge | `/interface wireless print detail` (`vlan-mode`, `vlan-id`) + `/interface bridge port print detail` | `vlan-mode=no-tag` on a radio whose bridge also carries management | MEDIUM |
-| NV2 without cipher | `/interface wireless print detail` | `wireless-protocol=nv2` with `nv2-security=disabled` — NV2 has its own cipher, independent of the profile | HIGH |
+| Station in pseudobridge | same safe wireless `proplist` + `/interface bridge port print` | `station-pseudobridge`/`station-bridge` in the same bridge as the internal network: a third party's L2 glued to yours | HIGH |
+| Virtual interface inheriting the open profile | `/interface wireless print proplist=name,master-interface,security-profile,disabled where master-interface!=""` | virtual SSID with `security-profile=default` | CRITICAL |
+| Radio VLAN in the management bridge | `/interface wireless print proplist=name,vlan-mode,vlan-id,security-profile,disabled` + `/interface bridge port print detail` | `vlan-mode=no-tag` on a radio whose bridge also carries management | MEDIUM |
+| NV2 without cipher | `/interface wireless print proplist=name,wireless-protocol,nv2-security,security-profile,disabled` | `wireless-protocol=nv2` with `nv2-security=disabled` — NV2 has its own cipher, independent of the profile | HIGH |
 | Orphan profile from the repeater wizard | `/interface wireless security-profiles print proplist=name,mode,authentication-types,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | profile generated by `Setup Repeater` still present after the repeater role was removed. Do not inspect or retrieve any stored key | MEDIUM |
-| Radio on without a function | `/interface wireless print detail` | interface in `ap-bridge` on a device that should be a station, or a wlan enabled without use | MEDIUM |
+| Radio on without a function | `/interface wireless print proplist=name,mode,security-profile,disabled` | interface in `ap-bridge` on a device that should be a station, or a wlan enabled without use | MEDIUM |
 | Interworking (802.11u) | same command | `interworking-profile` active without need: publishes network data to anyone who probes | LOW |
 
 ## 5. Regulatory and RF with a security effect
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Regulatory limit ignored | `/interface wireless print detail` | `frequency-mode=manual-txpower` or `superchannel`: power and channel outside the local rules | HIGH |
-| Country not set | same + `/interface wireless info country-info <country>` | `country=no_country_set` or a country other than the one of operation | HIGH |
-| Antenna gain not declared | `/interface wireless print detail` (`antenna-gain`) | `0` with an external antenna. Since 6.46 the field disappeared from the UI on fixed-antenna devices, **but stays changeable from the CLI** | HIGH |
+| Regulatory limit ignored | `/interface wireless print proplist=name,frequency-mode,country,tx-power-mode,tx-power,disabled` | `frequency-mode=manual-txpower` or `superchannel`: power and channel outside the local rules | HIGH |
+| Country not set | same safe wireless `proplist` + `/interface wireless info country-info <country>` | `country=no_country_set` or a country other than the one of operation | HIGH |
+| Antenna gain not declared | `/interface wireless print proplist=name,antenna-gain,country,frequency-mode,disabled` | `0` with an external antenna. Since 6.46 the field disappeared from the UI on fixed-antenna devices, **but stays changeable from the CLI** | HIGH |
 | Manual power above the allowed | same (`tx-power-mode`, `tx-power`, `tx-chains`) | `all-rates-fixed`/`manual` above the EIRP. **Careful with the maths:** with 802.11n the chains add +3/+5/+6 dBm to the configured value | MEDIUM |
 | Real channel different from the configured one | `/interface wireless monitor <if> once` | with DFS or `frequency=auto`, the `frequency` field **does not prove** the channel in use — the radio moves on its own on radar detection | MEDIUM |
-| Basic rate too low | `/interface wireless print detail` (`basic-rates-*`) | 1/2 Mbps on 2.4 GHz: extends the usable range of the cell beyond the perimeter | LOW |
+| Basic rate too low | `/interface wireless print proplist=name,basic-rates-a-g,basic-rates-b,disabled` | 1/2 Mbps on 2.4 GHz: extends the usable range of the cell beyond the perimeter | LOW |
 | Aggregation priority open | same (`ht-ampdu-priorities`) | priorities 4-7 enabled on a user network: a client marks its own traffic as voice and takes the medium | LOW |
 
 ## 6. Evidence and real state
