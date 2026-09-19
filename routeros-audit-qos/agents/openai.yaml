@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit QoS"
+  short_description: "Audit RouterOS queue behavior where QoS affects resilience or security controls."
