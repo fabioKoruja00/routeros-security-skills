@@ -17,7 +17,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Weak / sample passphrase | same | same | passphrase short, digits only, equal to the SSID, or copied from training material. **The system accepts from 8 characters** | CRITICAL |
 | EAP without certificate validation | same | same | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
 | WPS enabled | `/interface wireless print detail` | `/interface wifi print detail` | `wps-mode` other than `disabled` | HIGH |
-| WPA3/OWE available and unused | — | `/interface wifi security print detail` | hardware with `wifi-qcom` still WPA2 only | LOW |
+| WPA3/OWE available and unused | — | `/interface wifi security print proplist=name,authentication-types,management-protection` | hardware with `wifi-qcom` still WPA2 only; never retrieve `passphrase` or other key material | LOW |
 
 `pmf=required` only counts with WPA3; with WPA2 the useful value is `allowed`. Requiring
 `required` on a WPA2 network disconnects legacy clients — write that into the risk.
