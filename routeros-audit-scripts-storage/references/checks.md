@@ -22,7 +22,7 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Exported config sitting on disk | `/file print detail` | `.rsc` file on the device is not automatically a secret leak: current RouterOS exports hide sensitive values by default. Escalate when provenance shows `show-sensitive`, manual secret insertion, or another process that wrote credentials into the file | HIGH |
+| Exported config sitting on disk | `/file print detail` | `.rsc` file on the device is not automatically a secret leak: v7 exports hide sensitive values by default. Escalate when the file came from a v6 `export` without `hide-sensitive`, a v7 `export show-sensitive`, manual secret insertion, or another process that wrote credentials into the file | HIGH |
 | Binary backup without password | `/file print detail` and `/system backup ...` | `.backup` generated without `password` — restorable by whoever downloads the file | HIGH |
 | Cloud backup without password | `/ip cloud print` | `backups-enabled=yes` without a backup password set | HIGH |
 | DDNS on without use | `/ip cloud print` | `ddns-enabled=yes` publishing the device's public IP without need | MEDIUM |
@@ -31,7 +31,7 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 | Degraded RAID | `/disk raid print` | array in degraded mode: the next failure takes the data with it, and nothing warns | HIGH |
 | ROSE installed without use | `/system package print` and `/disk print detail` | `rose-storage` package present on a device that only routes — file-service surface for no reason | MEDIUM |
 
-`export` hides sensitive values by default on current RouterOS releases. The dangerous case is an explicit `show-sensitive` export, manually embedded credentials, or another routine that writes secrets into a file.
+`export` hides sensitive values by default on v7; on v6 it shows them unless `hide-sensitive` is given. The dangerous cases are a v6 export without `hide-sensitive`, a v7 `export show-sensitive`, manually embedded credentials, or another routine that writes secrets into a file.
 
 ## 3. Container (v7)
 

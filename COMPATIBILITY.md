@@ -23,14 +23,14 @@ Use the skill folders under:
 
 ### OpenAI Codex
 
-Codex discovers repository skills under `.agents/skills/` and user skills under `$HOME/.agents/skills/`.
+Codex discovers user skills under `$CODEX_HOME/skills/` (`~/.codex/skills/` by default) and repository skills under `<repo>/.codex/skills/`.
 
 Recommended project layout:
 
 ```
-<repo>/.agents/skills/routeros-audit-method/
-<repo>/.agents/skills/routeros-factory-defaults/
-<repo>/.agents/skills/routeros-audit-firewall/
+<repo>/.codex/skills/routeros-audit-method/
+<repo>/.codex/skills/routeros-factory-defaults/
+<repo>/.codex/skills/routeros-audit-firewall/
 ...
 ```
 
@@ -40,8 +40,6 @@ Antigravity also supports the common `SKILL.md` layout.
 
 - global: `~/.gemini/config/skills/`
 - project/workspace: `<repo>/.agents/skills/`
-
-Because Codex and Antigravity both support project skills in `.agents/skills/`, the same project installation can serve both.
 
 ### ChatGPT Skills
 
@@ -56,12 +54,12 @@ Example on Linux/macOS:
 ```bash
 git clone https://github.com/fabioKoruja00/routeros-security-skills ~/routeros-security-skills
 
-mkdir -p ~/.claude/skills ~/.agents/skills ~/.gemini/config/skills
+mkdir -p ~/.claude/skills ~/.codex/skills ~/.gemini/config/skills
 
 for d in ~/routeros-security-skills/routeros-*; do
   name="$(basename "$d")"
   ln -sfn "$d" "$HOME/.claude/skills/$name"
-  ln -sfn "$d" "$HOME/.agents/skills/$name"
+  ln -sfn "$d" "$HOME/.codex/skills/$name"
   ln -sfn "$d" "$HOME/.gemini/config/skills/$name"
 done
 ```

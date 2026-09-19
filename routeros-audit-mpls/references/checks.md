@@ -31,7 +31,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Duplicated `site-id` in BGP-VPLS | `/interface vpls bgp-vpls print detail` | dynamic tunnel created for a peer that does not belong to the VPN — and it **joins the bridge on its own** | CRITICAL |
 | Redistribution of connected in the VRF | `/routing bgp vpn print detail` | PE-CE links and the management network entering the customer's VPN | HIGH |
 | Route leaking to the global table | `/ip route print detail` filtered by VRF | static route with gateway `@main` in a customer VRF: punches through the isolation | CRITICAL |
-| Management VRF mismatch | `/ip service print detail` + `/ip vrf print detail` | RouterOS v7 can bind telnet, www, ssh, www-ssl, api, winbox and api-ssl to a VRF; the default is `main` and FTP is an exception. Finding: the documented management VRF does not match the service's actual `vrf` setting | HIGH |
+| Management VRF mismatch | `/ip service print detail` + `/ip vrf print detail` | RouterOS v7 can bind telnet, www, ssh, www-ssl, api, winbox and api-ssl to a VRF; the default is `main` and FTP is an exception; on v6 services answer only through the main table. Finding: the documented management VRF does not match the service's actual `vrf` setting | HIGH |
 
 ## 3. Traffic engineering
 

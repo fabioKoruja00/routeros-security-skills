@@ -41,7 +41,7 @@ One topic per connection. Start with what depends on nothing (`/ip service`, `/i
 bulk read-only sequence is in [references/collection.md](references/collection.md); the safe
 procedure during an incident is in [references/incident.md](references/incident.md).
 
-`/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on current RouterOS releases; **never use `show-sensitive` during normal AI-assisted collection**. `/ip settings`,
+`/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. **Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) during normal AI-assisted collection.** `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
 connection-tracking timeouts only appear in the `print` of their own menu.
 

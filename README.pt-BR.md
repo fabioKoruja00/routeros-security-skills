@@ -63,7 +63,7 @@ git clone https://github.com/fabioKoruja00/routeros-security-skills
 ```
 
 - **Claude Code**: copie ou crie symlinks das pastas `routeros-*` escolhidas em `~/.claude/skills/` ou `<repo>/.claude/skills/`.
-- **Codex**: use `$HOME/.agents/skills/` ou `<repo>/.agents/skills/`.
+- **Codex**: use `~/.codex/skills/` ou `<repo>/.codex/skills/`.
 - **Google Antigravity**: use `~/.gemini/config/skills/` globalmente ou `<repo>/.agents/skills/` por projeto.
 - **ChatGPT Skills**: cada skill já inclui `agents/openai.yaml` além do `SKILL.md` comum.
 

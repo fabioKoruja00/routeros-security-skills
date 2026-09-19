@@ -18,7 +18,7 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 ## Traps
 
 - **`/tool fetch` does not verify certificates by default** (`check-certificate=no`, even over HTTPS).
-- **Current RouterOS hides sensitive values in normal exports.** The dangerous cases are an explicit `show-sensitive`, manually embedded credentials, or scripts that write secret-bearing content to `/file`. Never use `show-sensitive` during normal AI-assisted collection.
+- **v7 hides sensitive values in normal exports; v6 shows them unless `hide-sensitive` is given.** The dangerous cases are a v6 export without `hide-sensitive`, a v7 `show-sensitive`, manually embedded credentials, or scripts that write secret-bearing content to `/file`. Never reveal sensitive values during normal AI-assisted collection.
 - **A script without a scheduler is not suspicious by itself** — it may be called by Netwatch, a DHCP lease script, PPP `on-up` or the mode button. Find the caller before accusing.
 - **An `.rsc` in `/file` may be the team's legitimate restore routine.** The finding survives only if the file has a secret inside.
 - **A script that nobody recognises is a possible compromise:** recommend investigation before removal.
