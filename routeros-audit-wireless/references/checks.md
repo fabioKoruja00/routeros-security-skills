@@ -12,7 +12,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | TKIP on unicast | same | same | `unicast-ciphers` with `tkip` | HIGH |
 | TKIP only on group | same | same | `group-ciphers` with `tkip` while unicast is already AES: **the whole network's broadcast falls back to TKIP** | HIGH |
 | PMF off | `management-protection=disabled` | `pmf` empty or `disabled` | management frames unprotected: mass deauthentication and AP cloning | HIGH |
-| PMKID exposed | `/interface wireless security-profiles print detail` | same | `disable-pmkid=no` — PMKID capture allows offline cracking of the PSK without an associated client | MEDIUM |
+| PMKID exposed | `/interface wireless security-profiles print proplist=name,authentication-types,mode,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | same | `disable-pmkid=no` — PMKID capture allows offline cracking without requiring the agent to read the PSK | MEDIUM |
 | Group key renewal | same | same | `group-key-update` far above the 5-minute default | LOW |
 | Weak / sample passphrase | same | same | passphrase short, digits only, equal to the SSID, or copied from training material. **The system accepts from 8 characters** | CRITICAL |
 | EAP without certificate validation | same | same | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
@@ -26,8 +26,8 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| PSK readable by monitoring-only users | `/user group print detail` and `/user print detail` | a group with `read` reaches `/interface wireless security-profiles`, `/radius` and the access-list: **PSK, PPSK and RADIUS secret appear in cleartext** | HIGH |
-| PPSK in cleartext in the table | `/interface wireless access-list print detail` | per-client key short or digits only — and it shows as a visible column in Winbox | HIGH |
+| Credential-reading permission granted to monitoring users | `/user group print detail` and `/user print proplist=name,group,address,disabled` | a monitoring-only group includes `sensitive`/`password` capabilities or equivalent access that could expose stored credentials. Do not prove this by reading the credentials themselves | HIGH |
+| PPSK-bearing access list | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,disabled` | per-client credential entries exist; assess admission scope and permissions only. Never retrieve or score the PPSK value | MEDIUM |
 
 This is why collection in this skill uses `proplist`: `print detail` in these areas brings secrets.
 
