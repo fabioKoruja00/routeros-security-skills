@@ -43,7 +43,7 @@ gera falso positivo — o que *parece* achado e não é.
   escolha insegura de alguém.
 - **Ler o papel do equipamento.** Borda, concentrador, switch, AP e CORE multihomed não aceitam a
   mesma lista.
-- **Segredo não entra na coleta normal assistida por IA.** Use `proplist` segura nas áreas que guardam credencial. Checagem de força de segredo exige revisão sensível separadamente autorizada; nunca inclua o valor no relatório. Nunca use `show-sensitive` na coleta normal.
+- **Segredo nunca entra na coleta assistida por IA.** Use `proplist` segura nas áreas que guardam credencial. Checagem de força de segredo fica fora do escopo do agente porque o valor nunca pode ser recuperado. Nunca inclua segredos em prompt, contexto, logs, artefatos ou relatório. Nunca use `show-sensitive` em coleta assistida por agente.
 - **Na dúvida entre duas severidades, a menor.** Severidade inflada vira ruído.
 - **Ausência de regra não é falha automática.** Conferir `disabled`, ordem na chain, lista de
   interface e contador antes.
