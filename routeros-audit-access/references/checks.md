@@ -9,7 +9,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Insecure service enabled | `/ip service print detail` | `telnet`, `ftp`, `www` or `api` with `disabled=no` | HIGH |
 | Administrative service without source restriction | `/ip service print detail` | `winbox`/`ssh`/`www-ssl`/`api-ssl` with `address=""`. In Winbox this is the empty **Available From** column | CRITICAL |
 | Default service port | `/ip service print detail` | `ssh` on 22 and `winbox` on 8291 exposed to the WAN. Changing the port is obfuscation: it does **not** replace `address` nor a filter — the official docs are explicit | LOW |
-| www-ssl/api-ssl certificate | `/ip service print detail` + `/certificate print detail` | `certificate=none` on a TLS service, or an expired certificate in external use | MEDIUM |
+| www-ssl/api-ssl certificate | `/ip service print detail` + `/certificate print proplist=name,common-name,subject-alt-name,issuer,serial-number,fingerprint,invalid-before,invalid-after,expired,revoked,trusted,private-key,key-type,key-size,signature-algorithm` | `certificate=none` on a TLS service, or an expired certificate in external use | MEDIUM |
 | SSH with weak crypto | `/ip ssh print` | `strong-crypto=no`, `allow-none-crypto=yes`, or `host-key-size` below 2048 | MEDIUM |
 | SSH forwarding enabled | `/ip ssh print` | `forwarding-enabled` other than `no` without a declared use: the device becomes a pivot into the network | HIGH |
 | `admin` user active | `/user print detail` | user `admin` with `disabled=no`. Without password or with the default one: immediate CRITICAL | CRITICAL |
