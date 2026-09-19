@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit Method"
+  short_description: "Core read-only RouterOS audit workflow, safety rules, severity and reporting."
