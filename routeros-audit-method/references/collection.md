@@ -30,10 +30,10 @@ Read-only sequence to gather the baseline before judging any item:
 /interface list member print detail
 /interface bridge print detail
 /interface bridge port print detail
-/system script print detail
-/system scheduler print detail
+/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count
+/system scheduler print proplist=name,start-time,interval,policy,run-count,next-run
 /file print detail
 ```
 
-`/export verbose hide-sensitive` complements, **does not replace**: what only appears in `print`
+`/export verbose` complements, **does not replace** the targeted prints. Sensitive values are hidden by default on current RouterOS releases; never use `show-sensitive` during normal AI-assisted collection. What only appears in `print`
 is listed in `routeros-audit-ip-settings` and in `routeros-factory-defaults`.
