@@ -1,0 +1,3 @@
+interface:
+  display_name: "RouterOS Audit Wireless"
+  short_description: "Audit legacy wireless and wifi-qcom security, ciphers, admission and exposure."
