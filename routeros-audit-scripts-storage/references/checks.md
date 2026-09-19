@@ -6,14 +6,14 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Secret inside a script | normal audit: `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count`; optional sensitive review only with explicit operator authorization | script source may contain passwords, tokens or connection strings. Do not read `source` into the agent context during normal collection; if a sensitive review is authorized, report only that a secret exists, never its value | CRITICAL |
-| Export with secrets inside a script | optional sensitive review only with explicit operator authorization | a script or scheduler action invoking `export show-sensitive` can write credentials into an `.rsc` file. Normal metadata-only collection cannot prove this safely | CRITICAL |
-| Backup leaving by an insecure path | optional sensitive review only with explicit operator authorization | inline script/scheduler actions may disclose destinations or credentials; inspect only when the operator accepts that sensitive content may enter the review context | CRITICAL |
+| Potential secret-bearing script | `/system script print proplist=name,owner,policy,dont-require-permissions,last-started,run-count` | script source may contain passwords, tokens or connection strings, therefore the agent must never read `source`. Assess owner, permissions, execution history and whether the script is expected | HIGH |
+| Risky export routine | metadata only; never read script source or scheduler `on-event` | not directly agent-verifiable. A trusted local scanner may return only a sanitized boolean such as `unsafe_export=true`; raw source must never be sent to the agent | HIGH |
+| Backup exfiltration path | metadata only; never read inline script/scheduler source | destination/security details embedded in source are not agent-verifiable. Use only sanitized metadata or a trusted local scanner result; never send raw source, URLs with credentials, tokens or passwords to the agent | HIGH |
 | Script not requiring permissions | `/system script print detail` | `dont-require-permissions=yes`: a user in a restricted group triggers an action their group would not allow | HIGH |
 | Broad script permission | `/system script print detail` (`policy`) | a simple routine with `policy` containing `password`, `sensitive` or `policy` | HIGH |
-| Fetch without certificate validation | optional sensitive review only with explicit operator authorization | detect `/tool fetch` calls and verify certificate validation only when script source review is authorized; do not read script source during the normal pass | HIGH |
-| Fetch over plain HTTP | optional sensitive review only with explicit operator authorization | a script downloading executable/configuration content over plain HTTP is unsafe; inspect only in the sensitive pass | HIGH |
-| Unknown schedule | `/system scheduler print proplist=name,start-time,interval,policy,run-count,next-run` | unknown or unexpected task, especially startup jobs. Inspect `on-event` only in the optional sensitive pass because it can contain inline secrets | CRITICAL |
+| Fetch certificate validation in scripts | metadata only; never read script source | not agent-verifiable when embedded in script source. A trusted local scanner may return only a boolean such as `fetch_without_cert_validation=true`; never send command text containing credentials or tokens | HIGH |
+| Fetch over plain HTTP in scripts | metadata only; never read script source | not agent-verifiable directly. A trusted local scanner may return only a sanitized protocol classification such as `scheme=http`; never send the raw URL if it can contain credentials or tokens | HIGH |
+| Unknown schedule | `/system scheduler print proplist=name,start-time,interval,policy,run-count,next-run` | unknown or unexpected task, especially startup jobs. Never read `on-event` because it can contain inline secrets | CRITICAL |
 | Orphan script | `/system script print detail` (`last-started`, `run-count`) | script with a high `run-count` and no visible scheduler — called by another path | HIGH |
 
 Scheduler and script are where an intruder's persistence lives. A finding here is **never** LOW.
@@ -22,7 +22,7 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Exported config sitting on disk | `/file print detail` | `.rsc` file on the device is not automatically a secret leak: v7 exports hide sensitive values by default. Escalate when the file came from a v6 `export` without `hide-sensitive`, a v7 `export show-sensitive`, manual secret insertion, or another process that wrote credentials into the file | HIGH |
+| Exported config sitting on disk | `/file print proplist=name,type,size,creation-time,last-modified` | `.rsc` presence is a handling risk, not proof of a secret leak. Never open it in the agent to inspect credentials; use provenance or a trusted local scanner that returns only a boolean `contains_secret` result | MEDIUM |
 | Binary backup without password | `/file print detail` and `/system backup ...` | `.backup` generated without `password` — restorable by whoever downloads the file | HIGH |
 | Cloud backup without password | `/ip cloud print` | `backups-enabled=yes` without a backup password set | HIGH |
 | DDNS on without use | `/ip cloud print` | `ddns-enabled=yes` publishing the device's public IP without need | MEDIUM |
