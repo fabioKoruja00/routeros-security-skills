@@ -7,9 +7,9 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
 | Session without MD5 | `/routing bgp connection print count-only where tcp-md5-key=""` (v7) / `/routing bgp peer print count-only where tcp-md5-key=""` (v6); use explicit non-secret `proplist` for peer/session metadata | key empty on a session crossing a third party's network | HIGH |
-| GTSM off | `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,ttl-security,max-prefix-limit,listen,disabled` (v7) / equivalent safe `proplist` on v6 | `ttl-security=no` on a directly connected eBGP peer: a forged packet from afar reaches port 179 | MEDIUM |
-| No prefix ceiling | same safe `proplist` | `max-prefix-limit` empty on an eBGP peer — a full-table leak exhausts RAM | HIGH |
-| Peer accepting any ASN (v7) | `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,ttl-security,max-prefix-limit,listen,disabled` | `remote.as` empty with `listen` on: v7 discovers the ASN from the OPEN message and closes with whoever arrives | HIGH |
+| GTSM off | `/routing bgp peer print proplist=name,remote-address,remote-as,ttl-security,max-prefix-limit,disabled` (v6) / `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,multihop,input.limit-process-routes-ipv4,input.limit-process-routes-ipv6,listen,disabled` (v7) | v6: `ttl-security=no` on a directly connected eBGP peer — a forged packet from afar reaches port 179. v7 has no `ttl-security` field: check that a directly connected peer is not `multihop=yes` | MEDIUM |
+| No prefix ceiling | same `proplist` | `max-prefix-limit` (v6) / `input.limit-process-routes-ipv4`/`-ipv6` (v7) empty on an eBGP peer — a full-table leak exhausts RAM | HIGH |
+| Peer accepting any ASN (v7) | `/routing bgp connection print proplist=name,remote.address,remote.as,local.role,multihop,input.limit-process-routes-ipv4,input.limit-process-routes-ipv6,listen,disabled` | `remote.as` empty with `listen` on: v7 discovers the ASN from the OPEN message and closes with whoever arrives | HIGH |
 | Session on a physical address | same safe `proplist` | iBGP peer on a physical interface IP instead of loopback: a link drop kills the session | MEDIUM |
 | Next-hop not adjusted on iBGP | explicit non-secret BGP `proplist` including the relevant nexthop-choice field | border without `force-self`: the iBGP peers receive an external next-hop, the route stays inactive or forces carrying the external network in the IGP | HIGH |
 | Port 179 open | `/ip firewall filter print detail where chain=input` | `dst-port=179` without `src-address` restricted to the peers | HIGH |
@@ -25,7 +25,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | `weight` as the only failover criterion | `/ip route print detail where bgp` | `weight` is local to the router and does not propagate — the policy does not replicate and the failover fails silently | MEDIUM |
 | MED passed on | `/ip route print detail` | MED from one neighbor being announced to a third AS | MEDIUM |
 | Origin `incomplete` announced | `/ip route print detail where bgp` | prefix with origin `incomplete` going out: that is redistribution entering BGP directly — an internal route leaking | HIGH |
-| Private AS announced | safe BGP `proplist` including `remove-private-as` and `out.redistribute` | `remove-private-as=no` on a session to the Internet | HIGH |
+| Private AS announced | `/routing bgp connection print proplist=name,remote.as,output.remove-private-as,output.redistribute,output.default-originate` (v7) / `/routing bgp peer print proplist=name,remote-as,remove-private-as,default-originate` (v6) | `remove-private-as=no` (v6) / `output.remove-private-as=no` (v7) on a session to the Internet | HIGH |
 | Broad redistribution | same safe BGP `proplist` | `connected,static,ospf` without filter: publishes the whole IGP | HIGH |
 | Unconditional default route | same safe BGP `proplist` | `default-originate=always` | MEDIUM |
 | Community without scrubbing | `/routing filter rule print detail` | community received from a customer passed on — the customer triggers prepend or blackhole on your side | HIGH |

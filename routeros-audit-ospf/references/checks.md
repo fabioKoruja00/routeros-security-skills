@@ -6,7 +6,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Adjacency without authentication | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,network-type,passive,cost,priority,hello-interval,dead-interval,disabled` (v7) / equivalent non-secret `proplist` on v6 | `auth` empty: **any host on the segment becomes a neighbor and injects LSAs** | CRITICAL |
+| Adjacency without authentication | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,type,passive,cost,priority,hello-interval,dead-interval,disabled` (v7) / equivalent non-secret `proplist` on v6 | `auth` empty: **any host on the segment becomes a neighbor and injects LSAs** | CRITICAL |
 | Cleartext authentication | same command | `auth=simple` | HIGH |
 | Customer interface active | same command (`passive`) | `passive=no` on an interface that does not talk to another OSPF router | HIGH |
 | Generic template without exception | safe interface-template `proplist` + `/routing ospf interface print` | template `interfaces=all` without reviewing what it resolved to: **a new interface joins OSPF on its own**. Read the resolved list, not the template | MEDIUM |
@@ -23,7 +23,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Priority inherited from an upgrade | same command (`priority`) | the default changed from **1 on v6 to 128 on v7**: a priority that was "rigid" on v6 stops counting after the upgrade and the election changes on its own | HIGH |
 | Weak device eligible as DR | same command | `priority` above 0 on small hardware | MEDIUM |
 | Different timers between sides | same command (hello/dead) | divergent values — the adjacency does not close | MEDIUM |
-| NBMA without neighbor list | safe interface-template `proplist` + `/routing ospf static-neighbor print` | `network-type=nbma` without a matching static neighbor | MEDIUM |
+| NBMA without neighbor list | safe interface-template `proplist` + `/routing ospf static-neighbor print` | `type=nbma` (v7) / `network-type=nbma` (v6) without a matching static neighbor | MEDIUM |
 
 ## 3. OSPF — instance, area and redistribution
 
@@ -37,7 +37,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | `no-summaries` in the wrong place | same command | set on the ABR (should be only on the internal routers): **the area is left without a route to the rest of the network** | HIGH |
 | NSSA without translator | same command | `nssa-translator=no` on every ABR of the NSSA | MEDIUM |
 | Missing backbone | same command | no area `0.0.0.0`. On **v7 every area, including the backbone, is created by hand** — on v6 it came ready | MEDIUM |
-| Permanent virtual-link | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,network-type,passive,cost,priority,hello-interval,dead-interval,disabled where network-type=virtual-link` | a patch became permanent, worse without authentication | HIGH |
+| Permanent virtual-link | `/routing ospf interface-template print proplist=interfaces,area,auth,auth-id,type,passive,cost,priority,hello-interval,dead-interval,disabled where type=virtual-link` (v7; `network-type` on v6) | a patch became permanent, worse without authentication | HIGH |
 | Missing summarisation | `/routing ospf area-range print detail` | internal prefix (backup network, management) announced to the backbone | MEDIUM |
 | Instance in the wrong VRF | `/routing ospf instance print detail` (`vrf`, `routing-table`) | a customer VRF instance with `vrf=main`: leak between customers | HIGH |
 | Growing LSA database | `/routing ospf lsa print count-only` | count climbing without a topology change | HIGH |

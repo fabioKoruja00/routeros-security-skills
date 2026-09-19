@@ -24,8 +24,8 @@ Scheduler and script are where an intruder's persistence lives. A finding here i
 |---|---|---|---|
 | Exported config sitting on disk | `/file print proplist=name,type,size,creation-time,last-modified` | `.rsc` presence is a handling risk, not proof of a secret leak. Never open it in the agent to inspect credentials; use provenance or a trusted local scanner that returns only a boolean `contains_secret` result | MEDIUM |
 | Backup encryption state | `/file print proplist=name,type,size,creation-time,last-modified` | encryption/password state is not safely inferable from file metadata and the audit must never generate a backup. Mark as not agent-verifiable unless trusted local tooling returns a sanitized boolean | HIGH |
-| Cloud backup without password | `/ip cloud print proplist=ddns-enabled,update-time,backups-enabled,back-to-home-vpn,status` | `backups-enabled=yes` without a backup password set | HIGH |
-| DDNS on without use | `/ip cloud print proplist=ddns-enabled,update-time,backups-enabled,back-to-home-vpn,status` | `ddns-enabled=yes` publishing the device's public IP without need | MEDIUM |
+| Cloud backup without password | `/ip cloud print` (settings menu: no `proplist`; no secret-bearing field) | `backups-enabled=yes` without a backup password set | HIGH |
+| DDNS on without use | `/ip cloud print` (settings menu: no `proplist`; no secret-bearing field) | `ddns-enabled=yes` publishing the device's public IP without need | MEDIUM |
 | SMB exposed | `/ip smb print` and `/ip smb shares print detail` | `enabled=yes` with `interfaces=all` or a share without authentication | CRITICAL |
 | Unplanned disk/partition | `/disk print proplist=slot,model,serial,interface,size,free,mount-point,status` and `/partitions print` | mounted media that is not in the inventory | MEDIUM |
 | Degraded RAID | `/disk raid print` | array in degraded mode: the next failure takes the data with it, and nothing warns | HIGH |

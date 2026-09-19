@@ -20,7 +20,7 @@ configuration, **passphrase included**.
 | Catch-all at the top | same command (see the numbering) | rule `radio-mac=00:00:00:00:00:00` above the specific ones: the ones below **are never reached** | MEDIUM |
 | Provisioning already enabled | same command | `action=create-dynamic-enabled` in a sensitive environment — a new radio joins and starts radiating without review | MEDIUM |
 | Controller address only via DHCP | `/ip dhcp-server network print detail` (`caps-manager`) and `/ip dhcp-client print detail` on the CAP | CAP depending on option 138 on a segment without DHCP snooping: a rogue server points the AP to another controller | MEDIUM |
-| Control port exposed | `/caps-man remote-cap print proplist=identity,address,base-mac,board,version,state` + `/ip firewall filter print` | CAPWAP port reachable from the WAN or from the customer network | HIGH |
+| Control port exposed | `/caps-man remote-cap print proplist=identity,address,base-mac,board,version,state` (legacy) / `/interface wifi capsman remote-cap print proplist=identity,address,base-mac,board,version,state` (wifi-qcom; the menu lives under `capsman`, not directly under `wifi`) + `/ip firewall filter print` | CAPWAP port reachable from the WAN or from the customer network | HIGH |
 | L2 preferred over L3 | `/caps-man remote-cap print proplist=identity,address,base-mac,board,version,state` | CAPs registered by MAC on a segment where any host can start a controller — **the L2 manager wins over the legitimate L3 one** | HIGH |
 
 ## 2. CAPsMAN — segmentation and data

@@ -21,7 +21,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | SOCKS | `/ip socks print` | `enabled=yes` without need — classic botnet relay vector | HIGH |
 | UPnP | `/ip upnp print` | `enabled=yes` — a client opens ports in the NAT on its own | HIGH |
 | UPnP taking down the WAN | `/ip upnp print` and `/ip upnp interfaces print` | `allow-disable-external-interface=yes`: **any LAN host can disable the external interface** | CRITICAL |
-| Cloud / DDNS | `/ip cloud print proplist=ddns-enabled,update-time,status,back-to-home-vpn,backups-enabled` | `ddns-enabled=yes` or `update-time=yes` without need: publishes the device's public IP | MEDIUM |
-| RoMON | `/tool romon print proplist=enabled,id` + `/tool romon print count-only where secrets=""` + `/tool romon port print proplist=interface,forbid,cost` | `enabled=yes` without `secrets`, or RoMON port active on an untrusted interface | HIGH |
-| SNMP | `/snmp print` and `/snmp community print proplist=disabled,addresses,security,read-access,write-access` | detailed in `routeros-audit-logging` | HIGH |
+| Cloud / DDNS | `/ip cloud print` (settings menu: no `proplist`; the output has no secret-bearing field) | `ddns-enabled=yes` or `update-time=yes` without need: publishes the device's public IP | MEDIUM |
+| RoMON | `:put [/tool romon get enabled]` + `:put [:len [/tool romon get secrets]]` (settings menu: no `proplist`/`count-only`; `print` shows the secrets) + `/tool romon port print proplist=interface,forbid,cost` | `enabled=yes` without `secrets`, or RoMON port active on an untrusted interface | HIGH |
+| SNMP | `:put [/snmp get enabled]` and `/snmp community print proplist=disabled,addresses,security,read-access,write-access` | detailed in `routeros-audit-logging` | HIGH |
 | Remote log and NTP | `/system logging action print` and `/system ntp client print` | detailed in `routeros-audit-logging` | HIGH |
