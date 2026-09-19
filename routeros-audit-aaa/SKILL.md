@@ -17,6 +17,6 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 
 ## Traps
 
-- **`/radius print detail` shows the secret.** Use the `proplist` given in the table.
+- **Do not use `/radius print detail` during normal collection.** Use the safe `proplist` in the table. Secret-strength review requires a separately authorized sensitive pass and the value must never be copied into the report.
 - **A single RADIUS locks administrative login too** when AAA depends on it — availability is a security finding here.
 - PPP tunnel and PPPoE server hardening is in `routeros-audit-vpn`.
