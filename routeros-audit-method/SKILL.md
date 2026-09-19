@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-method
-description: "How to run a read-only security audit on MikroTik RouterOS without changing or knocking down the device: the rules that cannot be broken (no write command, secrets never in the report, read-group user, named targets only), what to read before judging (version, factory default, device role), collection order and the bulk read-only sequence, the severity scale (CRITICAL / HIGH / MEDIUM / LOW) and how to classify, the output format per device, the traps measured in the field, and the safe procedure during an incident. This skill should be used first, before any routeros-audit-* skill, and whenever a finding needs to be classified or reported."
+description: "How to run a read-only security audit on MikroTik RouterOS without changing or knocking down the device: the rules that cannot be broken (no write command, secrets never enter agent context or report, dedicated least-privilege audit account, named targets only), what to read before judging (version, factory default, device role), collection order and the bulk read-only sequence, the severity scale (CRITICAL / HIGH / MEDIUM / LOW) and how to classify, the output format per device, the traps measured in the field, and the safe procedure during an incident. This skill should be used first, before any routeros-audit-* skill, and whenever a finding needs to be classified or reported."
 ---
 
 # RouterOS security audit — method
@@ -15,11 +15,7 @@ The shared method behind every `routeros-audit-*` skill. Every command in those 
   audit and becomes an incident.
 - **Do not restrict Winbox as a recommendation** on its own: it is the recovery path of the
   device. Recommend restricting its *source* (`address`), never removing the service.
-- **Secrets never enter the report.** When reading an area that stores credentials, use
-  `proplist` to bring only what matters — `/radius print proplist=address,service,timeout`,
-  `/user print proplist=name,group,address`, `/certificate print proplist=name,invalid-after,expired`.
-  Never paste a PSK, PPP password, private key or SNMP community into a document, a chat or an
-  agent prompt. The finding is "weak password on X", not the value.
+- **Secrets never enter the agent context, prompt, logs, artifacts or report.** This rule has no exception. When reading credential-bearing areas, use an explicit `proplist` that excludes all secret values. Never retrieve PSKs, passwords, PPP secrets, RADIUS secrets, SNMP community strings, WireGuard preshared keys, private keys, tokens, API keys, SMTP passwords or script bodies that may contain credentials. Do not perform secret-strength analysis inside the agent. Report only metadata that can be proven without reading the secret, such as whether a credential-backed feature is enabled, its authentication mode, source restriction, transport protection and privilege scope.
 - **Use a dedicated least-privilege audit account** over SSH or the API. Do not assume the built-in `read` group is strictly read-only: it also carries policies such as `reboot`, `test`, `sniff`, `sensitive`, API access and others. Build a custom group with only the login method and read capabilities required for the approved collection. Add any extra permission only for a named check that requires it. Reading production is still touching it: it creates a session, a log line and competes for CPU with the device's own work. Audit only the devices that were named, when they were named.
 
 ## Before judging any item
@@ -41,7 +37,7 @@ One topic per connection. Start with what depends on nothing (`/ip service`, `/i
 bulk read-only sequence is in [references/collection.md](references/collection.md); the safe
 procedure during an incident is in [references/incident.md](references/incident.md).
 
-`/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. **Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) during normal AI-assisted collection.** `/ip settings`,
+`/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. **Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) in any agent-assisted collection. There is no sensitive-review mode.** `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
 connection-tracking timeouts only appear in the `print` of their own menu.
 
@@ -98,9 +94,7 @@ devices, not one item per device.
   physical confirmation. Treat as a possible compromise, not as a configuration backlog.
 - **`device-mode` (7.1x+) blocks `scheduler` and `script`** and only releases them with physical
   access: treat as unsupported, not as a device failure.
-- **A sample password from training material is not a recommendation.** A short, generic value
-  (`demo`, `test`, a digit sequence) found in production is a critical finding, not a reference
-  configuration.
+- **Do not inspect password/PSK/community values to judge strength.** Secret quality must be validated outside the agent with a trusted local process if operations requires it. The agent may only state that secret strength was not assessed because secret values are intentionally excluded.
 
 ## Domain skills
 
