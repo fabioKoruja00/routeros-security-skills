@@ -5,7 +5,7 @@ description: "Read-only audit of BGP on MikroTik RouterOS (v6/v7): session harde
 
 # RouterOS security audit — BGP and RPKI
 
-On v7 a session without an output filter announces **every connected network by default**. The other CRITICALs: no input filter on a transit peer, a transit-to-transit leak, a third party's blackhole community accepted for a prefix that is not theirs.
+On v7, an empty output filter provides no outbound safety boundary: eligible routes from `output.network`, redistribution and route selection can be exported unless policy restricts them. Verify the configured sources and actual advertisements before declaring a leak. Other critical cases include an unfiltered transit input, transit-to-transit leaks, and accepting a third party's blackhole community for a prefix they do not own.
 
 ## v6 vs v7 menu map
 
