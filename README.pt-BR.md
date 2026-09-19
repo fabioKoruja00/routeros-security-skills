@@ -77,10 +77,13 @@ Um documento por equipamento **com achado**. Cada achado: o que está errado, o 
 leitura que comprova, o que está em jogo, e as formas possíveis de resolver com o risco de cada
 uma — inclusive o de perder acesso ao equipamento. Caminho, não receita pronta para colar.
 
-## Escopo e aviso
+## Fontes e aviso
 
-Material independente, baseado na documentação pública do RouterOS e em experiência de campo.
-Sem vínculo, endosso ou certificação da MikroTik. Comandos, menus e defaults mudam entre versões
+As checagens, valores de fábrica e armadilhas deste repositório derivam da documentação oficial
+do MikroTik RouterOS (help.mikrotik.com) — em especial as páginas *Securing your router*,
+*Building Advanced Firewall*, *Bridge Hardware Offloading*, *Device-mode*, *IPv6 Settings*,
+*Connection tracking* e as referências de cada menu. Material independente, sem vínculo, endosso
+ou certificação da MikroTik. Comandos, menus e defaults mudam entre versões
 do RouterOS — confirmar na versão instalada antes de agir sobre qualquer achado.
 
 ## Licença

@@ -1,6 +1,6 @@
 ---
 name: routeros-audit-method
-description: "How to run a read-only security audit on MikroTik RouterOS without changing or knocking down the device: the rules that cannot be broken (no write command, secrets never enter agent context or report, dedicated least-privilege audit account, named targets only), what to read before judging (version, factory default, device role), collection order and the bulk read-only sequence, the severity scale (CRITICAL / HIGH / MEDIUM / LOW) and how to classify, the output format per device, the traps measured in the field, and the safe procedure during an incident. This skill should be used first, before any routeros-audit-* skill, and whenever a finding needs to be classified or reported."
+description: "How to run a read-only security audit on MikroTik RouterOS without changing or knocking down the device: the rules that cannot be broken (no write command, secrets never enter agent context or report, dedicated least-privilege audit account, named targets only), what to read before judging (version, factory default, device role), collection order and the bulk read-only sequence, the severity scale (CRITICAL / HIGH / MEDIUM / LOW) and how to classify, the output format per device, the traps documented by the vendor, and the safe procedure during an incident. This skill should be used first, before any routeros-audit-* skill, and whenever a finding needs to be classified or reported."
 ---
 
 # RouterOS security audit — method
@@ -69,7 +69,7 @@ to the device. No write command ready to paste: a path, not a recipe.
 A finding repeated across several devices becomes **one** item with the list of affected
 devices, not one item per device.
 
-## Measured traps
+## Documented traps
 
 - **`/export` does not show everything.** `/ip/settings`, the per-service `Available From`,
   `Protected RouterBOOT`, `device-mode` and the connection-tracking timeouts only appear in the
