@@ -10,12 +10,12 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | WEP / static key | `/interface wireless security-profiles print proplist=name,mode,authentication-types,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | use explicit non-secret `proplist` fields on `/interface wifi security` | `mode=static-keys-required` or `static-keys-optional`, or equivalent legacy/open security mode; never retrieve key material | CRITICAL |
 | WPA1 still accepted | same | same | `authentication-types` with `wpa-psk` (without the `2`) — common "for compatibility", ticked together with WPA2 | HIGH |
 | TKIP on unicast | same | same | `unicast-ciphers` with `tkip` | HIGH |
-| TKIP only on group | same | same | `group-ciphers` with `tkip` while unicast is already AES: **the whole network's broadcast falls back to TKIP** | HIGH |
-| PMF off | `management-protection=disabled` | `pmf` empty or `disabled` | management frames unprotected: mass deauthentication and AP cloning | HIGH |
+| TKIP only on group | same | same | `group-ciphers` with `tkip` while unicast is already AES: **the whole network's broadcast falls back to TKIP** | MEDIUM |
+| PMF off | `management-protection=disabled` | `management-protection` empty or `disabled` (the `wifi` menu uses the same name) | management frames unprotected: mass deauthentication and AP cloning. `disabled` is the factory value and WPA2-PSK does not require PMF — HIGH only where WPA3/SAE or OWE is in use | MEDIUM |
 | PMKID exposed | `/interface wireless security-profiles print proplist=name,authentication-types,mode,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | same | `disable-pmkid=no` — PMKID capture allows offline cracking without requiring the agent to read the PSK | MEDIUM |
 | Group key renewal | same | same | `group-key-update` far above the 5-minute default | LOW |
 | Passphrase strength | not agent-verifiable: the passphrase is never retrieved | same | a trusted local scanner may return only a sanitized boolean such as `weak_passphrase=true` (short, digits only, equal to the SSID, vendor documentation example). **The system accepts from 8 characters** | CRITICAL |
-| EAP without certificate validation | `/interface wireless security-profiles print proplist=name,mode,authentication-types,eap-methods,tls-mode` | `/interface wifi security print proplist=name,authentication-types,eap-methods,tls-mode` | `tls-mode=dont-verify-certificate` or `no-certificates` with `wpa2-eap` | HIGH |
+| EAP without certificate validation | `/interface wireless security-profiles print proplist=name,mode,authentication-types,eap-methods,tls-mode` | `/interface wifi security print proplist=name,authentication-types,eap-methods,eap-certificate-mode` | `tls-mode=dont-verify-certificate` or `no-certificates` (legacy) / `eap-certificate-mode` not verifying the server (`wifi`) with EAP | HIGH |
 | WPS enabled | `/interface wireless print proplist=name,wps-mode,default-authentication,default-forwarding,mode,wireless-protocol,wds-mode,wds-default-bridge,bridge-mode,security-profile,master-interface,vlan-mode,vlan-id,frequency-mode,country,tx-power-mode,tx-power,disabled` | use an explicit non-secret `proplist` on `/interface wifi` | `wps-mode` other than `disabled` | HIGH |
 | WPA3/OWE available and unused | — | `/interface wifi security print proplist=name,authentication-types,management-protection` | hardware with `wifi-qcom` still WPA2 only; never retrieve `passphrase` or other key material | LOW |
 
@@ -39,9 +39,9 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 | Rule order | same command (the numbering is the evaluation order) | broad permissive rule before the restrictive one — the list stops at the first match | HIGH |
 | Empty list with permissive default | `/interface wireless print proplist=name,default-authentication,default-forwarding,security-profile,disabled` + access-list | `default-authentication=yes` and an empty list: only the password stands in the way | MEDIUM |
 | MAC as the only control | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | MAC filter without WPA2 underneath — a MAC is sniffed and cloned | HIGH |
-| Allow by OUI | same command | `mac-mask` covering a whole vendor (e.g. `FF:FF:FF:00:00:00`) with `action=accept` | CRITICAL |
+| Allow by OUI | same command | `mac-mask` (legacy) / `mac-address-mask` (`wifi`) covering a whole vendor (e.g. `FF:FF:FF:00:00:00`) with `action=accept` | HIGH |
 | Client talks to client | `/interface wireless print proplist=name,default-forwarding,security-profile,disabled` or explicit non-secret `/interface wifi datapath` `proplist` | `default-forwarding=yes` on a guest, hotspot or public SSID | HIGH |
-| Time-based rule without a clock | access-list + `/system ntp client print` | rule with `time=` on a device with NTP off: the window opens or closes at the wrong time | LOW |
+| Time-based rule without a clock | access-list + `/system ntp client print` | rule with `time=` on a device with NTP off: the window opens or closes at the wrong time | MEDIUM |
 | Signal floor | `/interface wireless access-list print proplist=mac-address,interface,signal-range,authentication,forwarding,time,disabled` | no `signal-range` on a façade AP — associates whoever is outside the building | LOW |
 | Loose connect-list on the client | `/interface wireless connect-list print proplist=interface,connect,ssid,mac-address,security-profile,signal-range,disabled` | station without a `security-profile` bound: associates to a same-name AP (evil twin) | HIGH |
 
@@ -52,9 +52,9 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 | Dynamic WDS | safe `/interface wireless print proplist=name,mode,wds-mode,wds-default-bridge,bridge-mode,security-profile,disabled` | `wds-mode=dynamic` with `wds-default-bridge` filled: a neighbouring AP forms an L2 bridge **on its own** | HIGH |
 | Bridge mode on without use | same command | `bridge-mode=enabled` on an end-user access AP — enables `station-bridge` on the other side | MEDIUM |
 | Station in pseudobridge | same safe wireless `proplist` + `/interface bridge port print` | `station-pseudobridge`/`station-bridge` in the same bridge as the internal network: a third party's L2 glued to yours | HIGH |
-| Virtual interface inheriting the open profile | `/interface wireless print proplist=name,master-interface,security-profile,disabled where master-interface!=""` | virtual SSID with `security-profile=default` | CRITICAL |
+| Virtual interface inheriting the open profile | `/interface wireless print proplist=name,master-interface,security-profile,disabled where master-interface!=""` | virtual SSID with a security profile whose `mode` is `none` (read the profile's content, not its name — `default` may have been hardened) | HIGH |
 | Radio VLAN in the management bridge | `/interface wireless print proplist=name,vlan-mode,vlan-id,security-profile,disabled` + `/interface bridge port print detail` | `vlan-mode=no-tag` on a radio whose bridge also carries management | MEDIUM |
-| NV2 without cipher | `/interface wireless print proplist=name,wireless-protocol,nv2-security,security-profile,disabled` | `wireless-protocol=nv2` with `nv2-security=disabled` — NV2 has its own cipher, independent of the profile | HIGH |
+| NV2 without cipher | `/interface wireless print proplist=name,wireless-protocol,nv2-security,security-profile,disabled` | `wireless-protocol=nv2` with `nv2-security=disabled` — NV2 has its own cipher, independent of the profile. On a dedicated provider PTP link, MEDIUM | HIGH |
 | Orphan profile from the repeater wizard | `/interface wireless security-profiles print proplist=name,mode,authentication-types,unicast-ciphers,group-ciphers,management-protection,disable-pmkid` | profile generated by `Setup Repeater` still present after the repeater role was removed. Do not inspect or retrieve any stored key | MEDIUM |
 | Radio on without a function | `/interface wireless print proplist=name,mode,security-profile,disabled` | interface in `ap-bridge` on a device that should be a station, or a wlan enabled without use | MEDIUM |
 | Interworking (802.11u) | same command | `interworking-profile` active without need: publishes network data to anyone who probes | LOW |
@@ -80,7 +80,7 @@ This is why collection in this skill uses `proplist`: `print detail` in these ar
 | Unprovisioned radio | `/caps-man radio print` | radio listed without the provisioned mark: does not radiate, and nobody notices | MEDIUM |
 | Sniffer on | `/interface wireless sniffer print` | `streaming-enabled=yes` or `server` pointing to an unplanned host: network frames leaving over TZSP | HIGH |
 | Wireless log missing | `/system logging print detail` | no rule with topic `wireless`: no evidence of mass deauthentication, DFS or authentication failure | MEDIUM |
-| RADIUS accounting off | `/caps-man aaa print` and access-list | `radius-accounting` unticked: no record of who connected and when | MEDIUM |
+| RADIUS accounting off | `/caps-man aaa print` (`interim-update`) and the access-list (`radius-accounting` exists on `/interface wifi access-list`; `/caps-man aaa` has no such field) | no accounting or `interim-update=0`: no record of who connected and when | MEDIUM |
 
 ## 7. Nuances that generate false positives
 

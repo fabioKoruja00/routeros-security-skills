@@ -14,7 +14,7 @@ Values checked against the official documentation. Read BEFORE opening a finding
 | `rp-filter` | `no` | `no` / `strict` / `loose` |
 | `tcp-syncookies` | `no` | SYN flood containment |
 | `allow-fast-path` | `yes` | |
-| `route-cache` | `yes` | |
+| `route-cache` | `yes` | present up to 7.12; gone from 7.18 on (measured) |
 | `arp-timeout` | `30s` | base of the reachable time |
 | `icmp-rate-limit` | `10` | send ceiling for the types in `icmp-rate-mask` |
 | `icmp-rate-mask` | `0x1818` | mask of rate-limited types |
@@ -99,8 +99,8 @@ What the factory configuration already provides, per chain:
 accept from loopback (`dst-address=127.0.0.1`); drop everything not from the `LAN` list.
 
 **IPv4 forward:** `fasttrack-connection` for `established,related`; accept
-`established,related,untracked`; drop `invalid`; drop `in-interface-list=WAN` with
-`connection-nat-state=!dstnat`.
+`established,related,untracked`; drop `invalid`; drop `connection-state=new` from
+`in-interface-list=WAN` with `connection-nat-state=!dstnat`.
 
 **IPv6 input:** accept `established,related,untracked`; drop `invalid`; accept `icmpv6`;
 accept UDP traceroute `33434-33534`; accept DHCPv6-PD on `dst-port=546` from `fe80::/10`;

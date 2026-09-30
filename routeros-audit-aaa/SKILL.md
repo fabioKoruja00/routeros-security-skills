@@ -18,5 +18,5 @@ Read-only: `print`, `get`, `export`, `monitor` only — never `set`, `add`, `rem
 ## Traps
 
 - **Never use `/radius print detail` or retrieve RADIUS/PPP/User Manager secret values.** Use only safe `proplist` fields. Secret strength is intentionally outside the scope of agent-assisted audit.
-- **A single RADIUS locks administrative login too** when AAA depends on it — availability is a security finding here.
+- **A single RADIUS stops every RADIUS-based login** — subscribers and RADIUS-authenticated admins. Local users still log in, so it is availability, not lockout.
 - PPP tunnel and PPPoE server hardening is in `routeros-audit-vpn`.

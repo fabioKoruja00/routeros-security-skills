@@ -10,12 +10,12 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | mac-winbox open | `/tool mac-server mac-winbox print` | `allowed-interface-list=all` | HIGH |
 | mac-ping | `/tool mac-server ping print` | `enabled=yes` in production | LOW |
 | Bandwidth server | `/tool bandwidth-server print` | `enabled=yes`, worse with `authenticate=no` | MEDIUM |
-| Open DNS cache | `/ip dns print` | `allow-remote-requests=yes` without a udp/53 filter at the edge: open resolver, DDoS amplifier | CRITICAL |
-| DoH without certificate validation | `/ip dns print` | `use-doh-server` configured with `verify-doh-cert=no` | HIGH |
+| Open DNS cache | `:put [/ip dns get allow-remote-requests]` + the input filter for udp/53 | `allow-remote-requests=yes` with udp/53 reachable from the WAN: open resolver, DDoS amplifier. Confirm the filter before rating it | CRITICAL |
+| DoH without certificate validation | `:put [/ip dns get use-doh-server]` + `:put [/ip dns get verify-doh-cert]` | `use-doh-server` configured with `verify-doh-cert=no`: an on-path attacker can answer — no worse than plain DNS, but the DoH promise is void | MEDIUM |
 | Proxy enabled | `/ip proxy print` | `enabled=yes` without need | MEDIUM |
-| Proxy listening on everything | `/ip proxy print detail` | `src-address=::`/`0.0.0.0` (the default) without the port filtered on the WAN: **open proxy**, relay for spam and third-party abuse | CRITICAL |
-| Proxy cache without ceiling | `/ip proxy print detail` | `max-cache-size=unlimited` with cache in RAM: memory exhaustion and reboot — denial of service by configuration | HIGH |
-| Proof of open proxy | `/ip proxy connections print` | active connection with a public/external `src-address` | CRITICAL |
+| Open proxy | `/ip proxy print` (`enabled`, `port`) + `/ip proxy access print` + the input filter for the proxy port | proxy port reachable from the WAN with no `access` rule limiting clients: relay for spam and third-party abuse. `src-address` is only the address the proxy uses for its own outgoing connections — it does not restrict who connects | CRITICAL |
+| Proxy cache without ceiling | `/ip proxy print` | `max-cache-size=unlimited` with cache in RAM (factory value is `none`): memory exhaustion and reboot | MEDIUM |
+| Proof of open proxy | `/ip proxy connections print` | active connection from an external `src-address` — a strong lead; confirm with the filter and access rules | HIGH |
 | Disabled proxy rule | `/ip proxy access print` | blocking rule with `disabled=yes`, or `hits=0` for a long time — a control the operator believes active and is not. **End of list: what does not match is ALLOWED** | HIGH |
 | Port-80 redirect without source | `/ip firewall nat print detail where action=redirect` | redirect to the proxy without `in-interface-list`/`src-address` of the LAN: turns the proxy open by an indirect route | HIGH |
 | SOCKS | `/ip socks print` | `enabled=yes` without need — classic botnet relay vector | HIGH |

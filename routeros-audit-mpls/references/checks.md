@@ -7,13 +7,13 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
 | LDP on an untrusted interface | `/mpls ldp interface print detail` | LDP active on a customer or WAN interface: **anyone on the L2 forms an adjacency (hello UDP/646, session TCP/646) and injects bindings** | CRITICAL |
-| Transport address on a physical interface | `/mpls ldp print detail` (v6) / `/mpls ldp instance print detail` (v7) | `transport-address`/`lsr-id` off the loopback — penultimate hop popping breaks | HIGH |
+| Transport address on a physical interface | `/mpls ldp print detail` (v6) / `/mpls ldp instance print detail` (v7) | `transport-address`/`lsr-id` off the loopback — the LDP session and the LSPs fall when that one physical link drops, even with other paths up | HIGH |
 | No label filter | `/mpls ldp accept-filter print` and `/mpls ldp advertise-filter print` | no filter: announces and accepts labels for the whole table, including `0.0.0.0/0` | MEDIUM |
 | Unexpected targeted session | `/mpls ldp neighbor print detail` | neighbor flagged `targeted` for an address outside the core | HIGH |
 | LDP neighbor outside the inventory | same command | unplanned dynamic neighbor, or with addresses outside the core ranges | HIGH |
 | Colliding label range | `/mpls print` (v6) / `/mpls settings print` (v7) | `dynamic-label-range` overlapping a static binding, or including 0-15 (reserved) — forwarding to the wrong destination | HIGH |
 | Orphan static binding | `/mpls local-bindings print`, `/mpls remote-bindings print`, `/mpls forwarding-table print` | label pointing to a next-hop outside the MPLS domain | MEDIUM |
-| Insufficient MTU on the path | `/mpls interface print detail` + `/interface print detail` (`l2mtu`) | L2MTU smaller than the required MPLS MTU: if the next header is not IP, **the packet is discarded silently** — intermittent failure that never shows in a log | HIGH |
+| Insufficient MTU on the path | `/mpls interface print detail` + `/interface print proplist=name,type,mtu,l2mtu` | L2MTU smaller than the required MPLS MTU: if the next header is not IP, **the packet is discarded silently** — intermittent failure that never shows in a log | MEDIUM |
 | TTL propagated | `/mpls settings print` (v7) / `/mpls print` (v6) | `propagate-ttl=yes`: a traceroute from outside enumerates the core IPs | LOW |
 | Unsupported architecture (v7) | `/system resource print` | `smips` device planned as LSR/PE — **MPLS does not exist on that architecture on v7** | HIGH |
 
@@ -30,7 +30,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Open import RT | `/routing bgp vpn print proplist=route-distinguisher,import-route-targets,export-route-targets,redistribute,disabled` (v7) | import matching another customer's export: **one customer's route enters another's VRF** | CRITICAL |
 | Duplicated `site-id` in BGP-VPLS | `/interface vpls bgp-vpls print detail` | dynamic tunnel created for a peer that does not belong to the VPN — and it **joins the bridge on its own** | CRITICAL |
 | Redistribution of connected in the VRF | `/routing bgp vpn print proplist=route-distinguisher,import-route-targets,export-route-targets,redistribute,disabled` | PE-CE links and the management network entering the customer's VPN | HIGH |
-| Route leaking to the global table | `/ip route print detail` filtered by VRF | static route with gateway `@main` in a customer VRF: punches through the isolation | CRITICAL |
+| Route leaking to the global table | `/ip route print where routing-table=<vrf>` (v7; `routing-mark` on v6), never the full table | static route in a customer VRF resolving through `@main` towards addresses outside that customer: punches through the isolation. `@main` only resolves the next hop — confirm what the route exposes before rating it | HIGH |
 | Management VRF mismatch | `/ip service print detail` + `/ip vrf print detail` | RouterOS v7 can bind telnet, www, ssh, www-ssl, api, winbox and api-ssl to a VRF; the default is `main` and FTP is an exception; on v6 services answer only through the main table. Finding: the documented management VRF does not match the service's actual `vrf` setting | HIGH |
 
 ## 3. Traffic engineering
@@ -42,7 +42,7 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Reservation exhausted | `/mpls traffic-eng interface print` | remaining bandwidth at zero: no new tunnel comes up, **including the protection ones** | MEDIUM |
 | No secondary path | `/interface traffic-eng print detail` | critical service without an alternative: a link failure takes it down with no automatic failover | HIGH |
 | `bandwidth` mistaken for a limit | `/interface traffic-eng print detail` | operator believes `bandwidth` limits the rate — **it only accounts the reservation**; `bandwidth-limit` is what limits | MEDIUM |
-| Next-hop diverted to TE | `/routing filter rule print detail` | global `use-te-nexthop=yes`: BGP traffic diverted through a tunnel without the policy saying so | MEDIUM |
+| Next-hop diverted to TE | `/routing filter rule print detail` (v7) / `/routing filter print detail` (v6, action `set-use-te-nexthop`) | TE next-hop enabled for BGP traffic without the policy saying so | MEDIUM |
 
 ## 4. Control plane under saturation
 

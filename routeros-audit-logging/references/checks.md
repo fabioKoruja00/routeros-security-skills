@@ -14,13 +14,13 @@ Severity scale: CRITICAL / HIGH / MEDIUM / LOW. Every command is read-only. Meth
 | Debug on permanently | `/system logging print detail where topics~"debug\|packet\|raw"` | debug/packet/raw topic logging non-stop: leaks traffic content and fills the disk | HIGH |
 | E-mail without TLS | `:put [/tool e-mail get server]`, `:put [/tool e-mail get port]`, `:put [/tool e-mail get tls]` | `tls=no` on an untrusted path. SMTP password presence/strength is intentionally not assessed by the agent because the password field is sensitive | HIGH |
 | Evidence never handled | `/log print without-paging where topics~"account\|critical\|error\|warning"` | serial failed logins, unexpected reboot or configuration change recorded and never looked at | HIGH |
-| Netwatch actions present | `/tool netwatch print proplist=name,host,type,interval,timeout,status,disabled` + presence-only counts for `up-script`, `down-script` and `test-script` | action scripts exist but their bodies must never enter the agent. Assess only presence, target and schedule unless a trusted local scanner returns sanitized classifications | MEDIUM |
+| Netwatch actions present | v7.12+: `/tool netwatch print proplist=name,host,type,interval,timeout,status,disabled`; v6 and early v7 have no `name`/`type`/`test-script` — use `proplist=host,interval,timeout,status,disabled`. Plus presence-only counts for `up-script`, `down-script` and (v7.12+) `test-script` | action scripts exist but their bodies must never enter the agent. Assess only presence, target and schedule unless a trusted local scanner returns sanitized classifications | MEDIUM |
 
 ## 2. SNMP and monitoring
 
 | Check | Read command | Characterises a failure | Sev. |
 |---|---|---|---|
-| Default community | `/snmp community print count-only where name=public` and `... where name=private` | count above zero: the well-known name is tested by filter, the value itself is never printed | CRITICAL |
+| Default community | `/snmp community print count-only where name=public` and `... where name=private` | count above zero on an enabled entry: the well-known name is tested by filter, the value itself is never printed. HIGH when read-only and restricted by `addresses`; CRITICAL with `write-access=yes` or open to any source | HIGH |
 | SNMP community exposure | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | assess scope, security mode and privileges only. Never retrieve the community string/name because it is a credential | HIGH |
 | No source restriction | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `addresses=0.0.0.0/0` or `::/0` on an enabled entry — the MIB may expose interfaces, IPs, clients, traffic and topology | HIGH |
 | Write enabled | `/snmp community print proplist=disabled,addresses,security,read-access,write-access,authentication-protocol,encryption-protocol` | `write-access=yes`: the device can be reconfigured over SNMP. Do not retrieve the community credential to prove the risk | CRITICAL |

@@ -34,7 +34,7 @@ The shared method behind every `routeros-audit-*` skill. Every command in those 
 
 One topic per connection. Start with what depends on nothing (`/ip service`, `/ip settings`,
 `/tool mac-server`), then the areas that require walking rule lists (`/ip firewall/*`). The
-bulk read-only sequence is in [references/collection.md](references/collection.md); the sensitive-menu denylist is in [references/sensitive-parameters.md](references/sensitive-parameters.md); the safe procedure during an incident is in [references/incident.md](references/incident.md).
+bulk read-only sequence is in [references/collection.md](references/collection.md); the sensitive-menu denylist is in [references/sensitive-parameters.md](references/sensitive-parameters.md); the safe procedure during an incident is in [references/incident.md](references/incident.md); fields that exist only on some versions are in [references/version-fields.md](references/version-fields.md).
 
 `/export verbose` **complements, never replaces** the prints. Sensitive values are hidden by default on v7 (`show-sensitive` is the flag that reveals them); on v6 the default is the opposite and `hide-sensitive` must be given explicitly. **Never use `show-sensitive` (v7) or omit `hide-sensitive` (v6) in any agent-assisted collection. There is no sensitive-review mode.** `/ip settings`,
 the per-service `address` ("Available From"), `Protected RouterBOOT`, `device-mode` and the
@@ -79,8 +79,7 @@ devices, not one item per device.
 - **The audit itself can take the target down.** Wireless `scan` and `snooper` without
   `background=yes` disconnect the clients; Torch and `profile` cost CPU on a device already
   saturated. Read state, do not provoke it.
-- **Fasttrack skips firewall, conntrack and queues.** Rules and queues that come after do not
-  apply to the accelerated connection — and the UI keeps showing both as if they did.
+- **Fasttrack skips the firewall and most queues for the accelerated packets.** The connection stays in conntrack and some packets still take the slow path, but rules and queues that come after do not see the fasttracked flow — and the UI keeps showing them as if they applied.
 - **A closed IPv4 firewall does not close IPv6.** The classic case is udp/53: blocked in
   `/ip firewall`, forgotten in `/ipv6 firewall`, and the open resolver stays up on the other
   protocol.
