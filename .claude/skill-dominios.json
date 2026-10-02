@@ -1,0 +1,10 @@
+{
+  "dominios": [
+    {
+      "dominio": "mikrotik",
+      "caminho": "^/",
+      "skills": ["routeros-*", "mikrotik-*", "skill-creator", "writing-guidelines"]
+    }
+  ],
+  "sem_arquivo": []
+}
