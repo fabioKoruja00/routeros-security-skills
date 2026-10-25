@@ -9,3 +9,10 @@
 - **Conventional Commits:** preservar prefixos técnicos como `feat`, `fix`, `docs`, `test`, `chore`, `ci` e `refactor`, mas escrever a descrição após `:` em português. Exemplo: `docs(governanca): padronizar títulos em português`.
 - **Pendências:** títulos das `Issues` em português, mantendo níveis de severidade e nomes técnicos; quando adotado no repositório, usar `O que fazer` e `Pronto quando` na descrição.
 - **Histórico:** não reescrever `Commits` nem mensagens automáticas de `Merge` já publicados apenas para traduzir texto. Corrigir títulos descritivos editáveis ainda abertos e seguir a regra nas próximas contribuições.
+
+## Estrelas das origens de skills adotadas
+
+- Ao instalar/adotar skill externa, registrar no inventário existente nome, URL canônica da origem GitHub, caminho do `SKILL.md` e versão/commit conhecido. Catálogos apenas consultados não contam.
+- Preferência do proprietário: dar uma `Star` à origem efetivamente usada, individualmente e pela própria conta autenticada, verificando antes se já está marcada. Uma estrela por repositório basta; sem automação massiva ou uso de outras contas.
+- Sem acesso para registrar/verificar a `Star`, incluir a URL e checkbox pendente na `Pull Request`, sem declarar a estrela concluída. Não registrar nem expor credenciais.
+- Respeitar a governança dos forks; esta regra vale somente para repositórios próprios.
